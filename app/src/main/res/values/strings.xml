@@ -2,10 +2,15 @@
 <resources>
 
     <string name="app_name">Discover Gurbani</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="title_activity_search">Discover Gurbani</string>
+    <string name="title_activity_shabad">Shabad</string>
+    <string-array name="search_modes">
+        <item name="0">1st Letter, Start</item>
+        <item name="1">1st Letter, Any</item>
+        <item name="2">Word, Any</item>
+        <item name="3">Word, English</item>
+        <!--<item name="4">Word, Transliteration</item>-->
+        <item name="5">Ang</item>f
+    </string-array>
 </resources>
