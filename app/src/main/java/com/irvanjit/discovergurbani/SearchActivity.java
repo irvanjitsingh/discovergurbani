@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -92,11 +93,11 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         //Setup Shabad Results list
         setupShabadsListView();
 
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doSearch(query);
-        }
+//        Intent intent = getIntent();
+//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+//            String query = intent.getStringExtra(SearchManager.QUERY);
+//            doSearch(query);
+//        }
 
         //keyboard search button
         query.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -176,7 +177,26 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
         searchView.requestFocusFromTouch();
+        searchView.setOnQueryTextListener(searchQueryListener);
     }
+
+    private SearchView.OnQueryTextListener searchQueryListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            String stringUrl = query.toString();
+            if (isConnected()) {
+                new SearchShabadTask().execute(stringUrl);
+            } else {
+                toast.show();
+            }
+            return true;
+        }
+    };
 
     public void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -269,13 +289,13 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         }
     }
 
-    public void doSearch(String query) {
-        if (isConnected()) {
-            new SearchShabadTask().execute(query);
-        } else {
-            toast.show();
-        }
-    }
+//    public void doSearch(String query) {
+//        if (isConnected()) {
+//            new SearchShabadTask().execute(query);
+//        } else {
+//            toast.show();
+//        }
+//    }
 
     public void getQuery(View view) {
         String stringUrl = query.getText().toString();
@@ -297,12 +317,12 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             super.onPreExecute();
             shabadList.clear();
             hideKeyboard();
-            loading = new ProgressDialog(SearchActivity.this);
-            loading.setMessage("Searching");
-            loading.setCancelable(true);
-            loading.setCanceledOnTouchOutside(false);
-            loading.setIndeterminate(false);
-            loading.show();
+//            loading = new ProgressDialog(SearchActivity.this);
+//            loading.setMessage("Searching");
+//            loading.setCancelable(true);
+//            loading.setCanceledOnTouchOutside(false);
+//            loading.setIndeterminate(false);
+//            loading.show();
         }
 
         @Override
@@ -323,7 +343,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         protected void onPostExecute(String result) {
             resultMessage.setText(result);
             setupShabadListAdapter();
-            loading.dismiss();
+//            loading.dismiss();
         }
     }
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:configChanges="orientation|screenSize"
-    tools:context=".HomeActivity">
+    tools:context=".SearchActivity">
 
     <RelativeLayout android:id="@+id/search_container"
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@+id/send_query"
-                android:hint="Enter a query"
+                android:hint="@string/search_hint_english"
                 android:singleLine="true"
                 android:imeOptions="actionSearch|flagNoExtractUi"
                 android:inputType="text"/>

@@ -31,6 +31,9 @@
             android:label="@string/title_activity_shabad"
             android:configChanges="orientation|screenSize"
             android:parentActivityName="com.irvanjit.discovergurbani.SearchActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ShabadActivity" />
         </activity>
     </application>
 

@@ -5,6 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_search">Discover Gurbani</string>
     <string name="title_activity_shabad">Shabad</string>
+
+    <string name="search_hint_english">Enter a query</string>
+
     <string-array name="search_modes">
         <item name="0">1st Letter, Start</item>
         <item name="1">1st Letter, Any</item>
