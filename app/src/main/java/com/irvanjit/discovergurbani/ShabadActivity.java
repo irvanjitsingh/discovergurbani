@@ -161,7 +161,6 @@ public class ShabadActivity extends ActionBarActivity {
             Window window = getDialog().getWindow();
             WindowManager.LayoutParams params = window.getAttributes();
             window.setAttributes(params);
-            window.setBackgroundDrawableResource(android.R.color.transparent);
             setDialogPosition();
         }
 
