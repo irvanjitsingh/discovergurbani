@@ -118,6 +118,8 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         int duration = Toast.LENGTH_SHORT;
         toast = Toast.makeText(context, connError, duration);
 
+        //misc. setup
+        loading = new ProgressDialog(SearchActivity.this);
         setupSpinners();
     }
 
@@ -222,6 +224,13 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         setupSpinner(searchModeSpinner, searchModeAdapter, searchMode);
     }
 
+    public void setupLoadingDialog(ProgressDialog loading) {
+            loading.setMessage("Searching");
+            loading.setCancelable(true);
+            loading.setCanceledOnTouchOutside(false);
+            loading.setIndeterminate(false);
+    }
+
     public void setupShabadsListView() {
         shabadList = new ArrayList<HashMap<String, String>>();
         shabadIdList = new ArrayList<String>();
@@ -306,29 +315,18 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         }
     }
 
-    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
-    // URL string and uses it to create an HttpUrlConnection. Once the connection
-    // has been established, the AsyncTask downloads the contents of the webpage as
-    // an InputStream. Finally, the InputStream is converted into a string, which is
-    // displayed in the UI by the AsyncTask's onPostExecute method.
     private class SearchShabadTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             shabadList.clear();
             hideKeyboard();
-//            loading = new ProgressDialog(SearchActivity.this);
-//            loading.setMessage("Searching");
-//            loading.setCancelable(true);
-//            loading.setCanceledOnTouchOutside(false);
-//            loading.setIndeterminate(false);
-//            loading.show();
+            setupLoadingDialog(loading);
+            loading.show();
         }
 
         @Override
         protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
             try {
 //                Request request = new Request(urls[0]);
 //                String result = readJson(request.downloadUrl());
@@ -338,12 +336,11 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                 return "No shabads found, check your query";
             }
         }
-        // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             resultMessage.setText(result);
             setupShabadListAdapter();
-//            loading.dismiss();
+            loading.dismiss();
         }
     }
 
@@ -396,7 +393,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         int pangti_id = -1;
         int shabad_id = -1;
-        int ang = -1;
+        int ang = 0;
         String pangti = "Shabad";
         String author = "Author";
         String section = "Section";

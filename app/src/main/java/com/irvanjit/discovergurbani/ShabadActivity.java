@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,8 +16,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.JsonReader;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -97,7 +100,7 @@ public class ShabadActivity extends ActionBarActivity {
         toast = Toast.makeText(context, connError, duration);
 
         if (isConnected()) {
-            new SearchShabadTask().execute(shabadId);
+            new DisplayShabadTask().execute(shabadId);
         } else {
             toast.show();
         }
@@ -130,70 +133,82 @@ public class ShabadActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     public static class DisplayOptionsFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            builder.setView(inflater.inflate(R.layout.shabad_display_options, null));
-            builder.setMessage("Test").setTitle("Display Options");
+            View displayView = inflater.inflate(R.layout.shabad_display_options, null);
+            builder.setView(displayView);
+//            builder.setMessage("...").setTitle("Display Options");
 //                    .setPositiveButton("set", new DialogInterface.OnClickListener() {
 //                        public void onClick(DialogInterface dialog, int id) {
-//                            // FIRE ZE MISSILES!
 //                        }
 //                    })
 //                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
 //                        public void onClick(DialogInterface dialog, int id) {
-//                            // User cancelled the dialog
 //                        }
 //                    });
             // Create the AlertDialog object and return it
 
             return builder.create();
         }
+
         @Override
         public void onStart() {
             super.onStart();
-
-            // safety check
-            if (getDialog() == null) {
-                return;
-            }
-//            ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-//            int dialogWidth = params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-//            int dialogHeight = params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-//            getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
-//            getDialog().getWindow().setGravity(Gravity.BOTTOM);
-
-
-//            Window window = getDialog().getWindow();
-//
-//            // set "origin" to top left corner, so to speak
-//            window.setGravity(Gravity.BOTTOM);
-//
-//            // after that, setting values for x and y works "naturally"
-//            WindowManager.LayoutParams params = window.getAttributes();
-//            params.x = 300;
-//            params.y = 100;
-//            window.setAttributes(params);
-//            Log.d("SIZING", String.format("Positioning DialogFragment to: x %d; y %d", params.x, params.y));
-
-
-//            other stuff you want to do in your onStart() method
+            Window window = getDialog().getWindow();
+            WindowManager.LayoutParams params = window.getAttributes();
+            window.setAttributes(params);
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            setDialogPosition();
         }
 
+        private void setDialogPosition() {
+            Window window = getDialog().getWindow();
+            window.setGravity(Gravity.BOTTOM);
+
+            WindowManager.LayoutParams params = window.getAttributes();
+            int dialogWidth = params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+            params.width = dialogWidth;
+            window.setAttributes(params);
+        }
+    }
+
+    public class ShabadDisplayAdapter extends SimpleAdapter {
+        private ArrayList<HashMap<String, String>> results;
+
+        public ShabadDisplayAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
+            super(context, data, resource, from, to);
+            this.results = data;
+        }
+
+        public View getView(int position, View view, ViewGroup parent) {
+            Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+            View v = view;
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.search_item, null);
+            }
+            TextView pangti = (TextView) v.findViewById(R.id.pangti);
+            TextView translation = (TextView) v.findViewById(R.id.translation);
+            TextView transliteration = (TextView) v.findViewById(R.id.transliteration);
+
+            pangti.setText(results.get(position).get(TAG_PANGTI));
+            pangti.setTypeface(anmolBaniBold);
+            translation.setText(results.get(position).get(TAG_TRANSLATION));
+            transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
+            return v;
+        }
+
+        public boolean isEnabled(int position) {
+            return false;
+        }
     }
 
 
-    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
-    // URL string and uses it to create an HttpUrlConnection. Once the connection
-    // has been established, the AsyncTask downloads the contents of the webpage as
-    // an InputStream. Finally, the InputStream is converted into a string, which is
-    // displayed in the UI by the AsyncTask's onPostExecute method.
-    private class SearchShabadTask extends AsyncTask<String, Void, String> {
+    private class DisplayShabadTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -208,21 +223,19 @@ public class ShabadActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... urls) {
 
-            // params comes from the execute() call: params[0] is the url.
             try {
 //                Request request = new Request(urls[0]);
 //                String result = readJson(request.downloadUrl());
 //                return readJson(request.downloadUrl());
                 return getData(urls[0]);
             } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
+                return "Could not display the shabad.";
             }
         }
-        // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             textView.setText(result);
-            shabadDisplayAdapter = new SimpleAdapter(
+            shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
                     R.layout.shabad_item, new String[]
                     {TAG_PANGTI, TAG_TRANSLATION, TAG_TRANSLITERATION},
@@ -339,14 +352,6 @@ public class ShabadActivity extends ActionBarActivity {
         }
         return null;
     }
-
-//    public String readJson(InputStream stream) throws IOException, UnsupportedEncodingException {
-//        Reader reader = null;
-//        reader = new InputStreamReader(stream, "UTF-8");
-//        char[] buffer = new char[3000];
-//        reader.read(buffer);
-//        return new String(buffer);
-//    }
 
     public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
