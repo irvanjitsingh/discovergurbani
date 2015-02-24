@@ -12,3 +12,4 @@
 
 # Java class files
 *.class
+/app/manifest-merger-release-report.txt
