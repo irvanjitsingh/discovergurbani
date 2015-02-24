@@ -65,6 +65,9 @@ public class ShabadActivity extends ActionBarActivity {
     private boolean hideTranslation = false;
     private static int viewWidth;
     private static int viewHeight;
+    private int firstPangti;
+    private int targetPangti;
+    private int targetPangtiPosition;
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -85,7 +88,7 @@ public class ShabadActivity extends ActionBarActivity {
         textView = (TextView) findViewById(R.id.result);
         Intent intent = getIntent();
         String shabadId = intent.getStringExtra(TAG_SHABAD);
-        String pangtiId = intent.getStringExtra(TAG_PANGTI_ID);
+        targetPangti = intent.getIntExtra("id", targetPangti);
         translationId = intent.getStringExtra(TAG_TRANSLATION);
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
         shabadList = new ArrayList<HashMap<String, String>>();
@@ -104,6 +107,8 @@ public class ShabadActivity extends ActionBarActivity {
         } else {
             toast.show();
         }
+
+        Log.d("TARGET PANGTI::", String.valueOf(firstPangti));
     }
 
     @Override
@@ -122,11 +127,11 @@ public class ShabadActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            displayOptions.show(getSupportFragmentManager(), "missiles");
             return true;
         }
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_tweaks) {
+        if (id == R.id.action_display_options) {
+            displayOptions.show(getSupportFragmentManager(), null);
             return true;
         }
 
@@ -241,8 +246,14 @@ public class ShabadActivity extends ActionBarActivity {
                     new int[] { R.id.pangti, R.id.translation, R.id.transliteration});
 
             listView.setAdapter(shabadDisplayAdapter);
-//            listView.getChildAt(0).setBackgroundColor(getResources().getColor(R.color.pangti_highlighted));
             loading.dismiss();
+
+            targetPangtiPosition = targetPangti - firstPangti;
+            //set pangti position
+//            listView.setSelection(2);
+            listView.smoothScrollToPosition(2);
+//            listView.getChildAt(0).setBackgroundColor(getResources().getColor(R.color.pangti_highlighted));
+            Log.d("FIRST PANGTI::", String.valueOf(firstPangti));
         }
     }
 
@@ -289,14 +300,10 @@ public class ShabadActivity extends ActionBarActivity {
     // Reads an InputStream and converts it to a String.
     public String readJson(InputStream in) throws IOException, UnsupportedEncodingException {
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-        int pangti_id = -1;
+        int pangti_id = 0;
         String pangti = "Shabad";
-        int author = -1;
-        String raag = "Raag";
-        int shabad_id = -1;
         String translation = "Translation";
         String transliteration = "Transliteration";
-        String result = "String: ";
         try {
             reader.beginArray();
             while (reader.hasNext()) {
@@ -304,15 +311,10 @@ public class ShabadActivity extends ActionBarActivity {
                 HashMap<String, String> shabad = new HashMap<String, String>();
                 while (reader.hasNext()) {
                     String name = reader.nextName();
-                    if (name.equals(TAG_PANGTI)) {
+                    if (name.equals(TAG_PANGTI_ID)) {
+                        pangti_id = reader.nextInt();
+                    } else if (name.equals(TAG_PANGTI)) {
                         pangti = reader.nextString();
-                        result += pangti;
-//                    } else if (name.equals(TAG_AUTHOR)) {
-//                        author = reader.nextInt();
-//                    } else if (name.equals(TAG_SHABAD)) {
-//                        shabad_id = reader.nextInt();
-                    } else if (name.equals(TAG_RAAG)) {
-                        raag = reader.nextString();
                     } else if (name.equals(TAG_TRANSLATION)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
@@ -339,6 +341,7 @@ public class ShabadActivity extends ActionBarActivity {
                         reader.skipValue();
                     }
                 }
+                firstPangti = pangti_id;
                 shabad.put(TAG_PANGTI, pangti);
                 shabad.put(TAG_TRANSLATION, translation);
                 shabad.put(TAG_TRANSLITERATION, transliteration);

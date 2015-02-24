@@ -4,6 +4,6 @@
     tools:context="com.irvanjit.gurbanikhoj.ShabadActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_tweaks" android:title="Tweaks"
+    <item android:id="@+id/action_display_options" android:title="Display Options"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
