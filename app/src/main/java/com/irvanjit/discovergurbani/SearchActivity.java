@@ -11,11 +11,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.text.InputType;
-import android.text.TextUtils;
 import android.util.JsonReader;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,20 +49,20 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 //    private EditText query;
     private TextView resultMessage;
     private Toast toast;
-    ProgressDialog loading;
+    private ProgressDialog loading;
 
     private ListView shabadsListView;
-    ArrayList<HashMap<String, String>> shabadList;
-    ArrayList<String> shabadIdList;
-    ArrayList<Integer> pangtiIdList;
-    String[] shabadListKeys;
-    int[] shabadListValues;
+    private ArrayList<HashMap<String, String>> shabadList;
+    private ArrayList<String> shabadIdList;
+    private ArrayList<Integer> pangtiIdList;
+    private String[] shabadListKeys;
+    private int[] shabadListValues;
     private String query;
 
 
     //default settings
-    public String translationId = "13";
-    public String transliterationId = "69";
+    private String translationId = "13";
+    private String transliterationId = "69";
     private int searchMode = 0;
     private static final String apiBase = "http://api.sikher.com/";
 //    private static final String apiBase = "http://10.0.0.195:8000/";
@@ -162,7 +159,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                 searchForShabad(query);
             }
         } else if (parent.getId() == R.id.translation_spinner) {
-            Log.d("TRANSLATION STRING", translationId);
             String langName = "lang_" + parent.getItemAtPosition(pos).toString().replaceAll(" ", "_");
             int strId = getResources().getIdentifier(langName, "string", getPackageName());
             translationId = getString(strId);
@@ -212,14 +208,14 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         }
     };
 
-    public void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
+    void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setSelection(defaultValue);
         spinner.setOnItemSelectedListener(this);
     }
 
-    public void setupSpinners() {
+    void setupSpinners() {
         //SPINNERS
         Spinner translationSpinner = (Spinner) findViewById(R.id.translation_spinner);
         Spinner transliterationSpinner = (Spinner) findViewById(R.id.transliteration_spinner);
@@ -236,19 +232,19 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         setupSpinner(searchModeSpinner, searchModeAdapter, searchMode);
     }
 
-    public void setupLoadingDialog(ProgressDialog loading) {
+    void setupLoadingDialog(ProgressDialog loading) {
             loading.setMessage("Searching");
             loading.setCancelable(true);
             loading.setCanceledOnTouchOutside(false);
             loading.setIndeterminate(false);
     }
 
-    public void setupShabadsListView() {
+    void setupShabadsListView() {
         shabadList = new ArrayList<HashMap<String, String>>();
-        shabadIdList = new ArrayList<String>();
-        pangtiIdList = new ArrayList<Integer>();
+        shabadIdList = new ArrayList<>();
+        pangtiIdList = new ArrayList<>();
 
-        shabadsListView = (ListView) findViewById(R.id.searchresults);
+        shabadsListView = (ListView) findViewById(R.id.search_results);
         shabadsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -256,11 +252,11 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                 String shabadId = shabadIdList.get(position);
                 int pangtiId = pangtiIdList.get(position);
 
-                // Start shabad activitiy
+                // Start shabad activity
                 Intent in = new Intent(getApplicationContext(),
                         ShabadActivity.class);
                 in.putExtra(TAG_SHABAD, shabadId);
-                in.putExtra(TAG_PANGTI_ID, (int)pangtiId);
+                in.putExtra(TAG_PANGTI_ID, pangtiId);
                 in.putExtra(TAG_TRANSLATION, translationId);
                 in.putExtra(TAG_TRANSLITERATION, transliterationId);
                 startActivity(in);
@@ -268,7 +264,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         });
     }
 
-    public void setupShabadListAdapter() {
+    void setupShabadListAdapter() {
         shabadListKeys = new String[] {TAG_PANGTI, TAG_TRANSLATION, TAG_TRANSLITERATION, TAG_META};
         shabadListValues = new int[] { R.id.pangti, R.id.translation, R.id.transliteration, R.id.meta};
 
@@ -366,7 +362,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         }
     }
 
-    public String queryBuilder(String rawQuery) throws IOException {
+    String queryBuilder(String rawQuery) throws IOException {
         String urlString;
         try {
             String query = URLEncoder.encode(rawQuery, "utf-8");
@@ -397,10 +393,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             int response = conn.getResponseCode();
             Log.d(DEBUG_TAG, "The response is: " + response);
             is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = parseQueryJson(is);
-            return contentAsString;
+            return parseQueryJson(is);
         } finally {
             if (is != null) {
                 is.close();

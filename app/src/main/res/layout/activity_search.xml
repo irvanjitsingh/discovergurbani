@@ -5,12 +5,12 @@
     android:configChanges="orientation|screenSize"
     tools:context=".SearchActivity">
 
-    <RelativeLayout android:id="@+id/search_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="@dimen/activity_vertical_margin">
+    <!--<RelativeLayout android:id="@+id/search_container"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingLeft="8dp"-->
+        <!--android:paddingRight="8dp"-->
+        <!--android:paddingTop="@dimen/activity_vertical_margin">-->
         <!--<RelativeLayout android:id="@+id/search_input_container"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content">-->
@@ -31,33 +31,35 @@
                 <!--android:text="Search"-->
                 <!--android:onClick="getQuery" />-->
         <!--</RelativeLayout>-->
-        <RelativeLayout android:id="@+id/spinners"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <Spinner android:id="@+id/searchmode_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Spinner android:id="@+id/transliteration_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/searchmode_spinner" />
-            <Spinner android:id="@+id/translation_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/transliteration_spinner" />
-        </RelativeLayout>
+    <!--</RelativeLayout>-->
+    <RelativeLayout android:id="@+id/spinners"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <Spinner android:id="@+id/searchmode_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Spinner android:id="@+id/transliteration_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/searchmode_spinner"
+            android:layout_toEndOf="@id/searchmode_spinner"/>
+        <Spinner android:id="@+id/translation_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/transliteration_spinner"
+            android:layout_toEndOf="@id/transliteration_spinner"/>
     </RelativeLayout>
 
     <TextView android:id="@+id/result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_container"
+        android:layout_below="@+id/spinners"
         android:textStyle="bold"
         android:gravity="center_horizontal|center_vertical"
         android:paddingTop="5dp"
         android:paddingBottom="5dp" />
     <ListView
-        android:id="@+id/searchresults"
+        android:id="@+id/search_results"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/result"/>

@@ -38,7 +38,6 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -55,16 +54,13 @@ public class ShabadActivity extends ActionBarActivity {
     private TextView textView;
     private TextView translationText;
     private ListView listView;
-    private Toast toast;
     private String translationId;
     private String transliterationId;
-    ArrayList<HashMap<String, String>> shabadList;
-    ProgressDialog loading;
+    private ArrayList<HashMap<String, String>> shabadList;
+    private ProgressDialog loading;
     private DialogFragment displayOptions;
     private ListAdapter shabadDisplayAdapter;
     private boolean hideTranslation = false;
-    private static int viewWidth;
-    private static int viewHeight;
     private int firstPangti;
     private int targetPangti;
     private int targetPangtiPosition;
@@ -83,7 +79,6 @@ public class ShabadActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        ActionBar actionBar = getSupportActionBar();
         setContentView(R.layout.activity_shabad);
         textView = (TextView) findViewById(R.id.result);
         Intent intent = getIntent();
@@ -93,19 +88,17 @@ public class ShabadActivity extends ActionBarActivity {
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
         shabadList = new ArrayList<HashMap<String, String>>();
         listView = (ListView) findViewById(R.id.shabadview);
-        viewWidth = listView.getWidth();
-        viewHeight = listView.getHeight();
         displayOptions = new DisplayOptionsFragment();
         //setup error toast
         Context context = getApplicationContext();
         CharSequence connError = "Not connected";
         int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, connError, duration);
+        Toast errorToast = Toast.makeText(context, connError, duration);
 
         if (isConnected()) {
             new DisplayShabadTask().execute(shabadId);
         } else {
-            toast.show();
+            errorToast.show();
         }
 
         Log.d("TARGET PANGTI::", String.valueOf(firstPangti));
@@ -174,8 +167,7 @@ public class ShabadActivity extends ActionBarActivity {
             window.setGravity(Gravity.BOTTOM);
 
             WindowManager.LayoutParams params = window.getAttributes();
-            int dialogWidth = params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-            params.width = dialogWidth;
+            params.width = LinearLayout.LayoutParams.MATCH_PARENT;
             window.setAttributes(params);
         }
     }
@@ -262,7 +254,7 @@ public class ShabadActivity extends ActionBarActivity {
 //        shabadDisplayAdapter.notify();
 //    }
 
-    public String queryBuilder(String shabadId) {
+    String queryBuilder(String shabadId) {
         String urlString = "";
         try {
             urlString = apiBase+"hymn/"+shabadId+"/"+translationId+"/"+transliterationId;
@@ -286,10 +278,7 @@ public class ShabadActivity extends ActionBarActivity {
             int response = conn.getResponseCode();
             Log.d(DEBUG_TAG, "The response is: " + response);
             is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = readJson(is);
-            return contentAsString;
+            return readJson(is);
         } finally {
             if (is != null) {
                 is.close();
