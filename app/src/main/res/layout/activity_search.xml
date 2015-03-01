@@ -34,7 +34,10 @@
     <!--</RelativeLayout>-->
     <RelativeLayout android:id="@+id/spinners"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
         <Spinner android:id="@+id/searchmode_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

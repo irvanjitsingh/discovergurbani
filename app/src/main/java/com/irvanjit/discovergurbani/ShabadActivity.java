@@ -28,10 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,9 @@ public class ShabadActivity extends ActionBarActivity {
     //    private static final String apiBase = "http://10.0.0.195:8000/";
     private TextView textView;
     private TextView translationText;
+    private TextView pangti;
+    private TextView translation;
+    private TextView transliteration;
     private ListView listView;
     private String translationId;
     private String transliterationId;
@@ -60,10 +65,10 @@ public class ShabadActivity extends ActionBarActivity {
     private ProgressDialog loading;
     private DialogFragment displayOptions;
     private ListAdapter shabadDisplayAdapter;
+    private Switch translationSwitch;
     private boolean hideTranslation = false;
-    private int firstPangti;
     private int targetPangti;
-    private int targetPangtiPosition;
+    private int pangtiPosition;
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -101,7 +106,7 @@ public class ShabadActivity extends ActionBarActivity {
             errorToast.show();
         }
 
-        Log.d("TARGET PANGTI::", String.valueOf(firstPangti));
+        Log.d("TARGET PANGTI::", String.valueOf(targetPangti));
     }
 
     @Override
@@ -120,6 +125,7 @@ public class ShabadActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            translation.setVisibility(View.GONE);
             return true;
         }
         //noinspection SimplifiableIfStatement
@@ -151,6 +157,7 @@ public class ShabadActivity extends ActionBarActivity {
             // Create the AlertDialog object and return it
 
             return builder.create();
+//            translationSwitch = (Switch) findViewById(R.id.translation_switch);
         }
 
         @Override
@@ -171,38 +178,6 @@ public class ShabadActivity extends ActionBarActivity {
             window.setAttributes(params);
         }
     }
-
-    public class ShabadDisplayAdapter extends SimpleAdapter {
-        private ArrayList<HashMap<String, String>> results;
-
-        public ShabadDisplayAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            this.results = data;
-        }
-
-        public View getView(int position, View view, ViewGroup parent) {
-            Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
-            View v = view;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.search_item, null);
-            }
-            TextView pangti = (TextView) v.findViewById(R.id.pangti);
-            TextView translation = (TextView) v.findViewById(R.id.translation);
-            TextView transliteration = (TextView) v.findViewById(R.id.transliteration);
-
-            pangti.setText(results.get(position).get(TAG_PANGTI));
-            pangti.setTypeface(anmolBaniBold);
-            translation.setText(results.get(position).get(TAG_TRANSLATION));
-            transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
-            return v;
-        }
-
-        public boolean isEnabled(int position) {
-            return false;
-        }
-    }
-
 
     private class DisplayShabadTask extends AsyncTask<String, Void, String> {
         @Override
@@ -236,16 +211,53 @@ public class ShabadActivity extends ActionBarActivity {
                     R.layout.shabad_item, new String[]
                     {TAG_PANGTI, TAG_TRANSLATION, TAG_TRANSLITERATION},
                     new int[] { R.id.pangti, R.id.translation, R.id.transliteration});
-
             listView.setAdapter(shabadDisplayAdapter);
+            listView.setSelection(pangtiPosition);
             loading.dismiss();
-
-            targetPangtiPosition = targetPangti - firstPangti;
+//            listView.notify();
+//            shabadDisplayAdapter.notify();
             //set pangti position
 //            listView.setSelection(2);
-            listView.smoothScrollToPosition(2);
-//            listView.getChildAt(0).setBackgroundColor(getResources().getColor(R.color.pangti_highlighted));
-            Log.d("FIRST PANGTI::", String.valueOf(firstPangti));
+
+//            listView.smoothScrollToPosition(2);
+//            Log.d("FIRST PANGTI::", String.valueOf(firstPangti));
+        }
+    }
+
+    public class ShabadDisplayAdapter extends SimpleAdapter {
+        private ArrayList<HashMap<String, String>> results;
+
+        public ShabadDisplayAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
+            super(context, data, resource, from, to);
+            this.results = data;
+        }
+
+        public View getView(int position, View view, ViewGroup parent) {
+            Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+            Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani-Bold.ttf");
+            View v = view;
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.search_item, null);
+            }
+            pangti = (TextView) v.findViewById(R.id.pangti);
+            translation = (TextView) v.findViewById(R.id.translation);
+            transliteration = (TextView) v.findViewById(R.id.transliteration);
+
+            pangti.setText(results.get(position).get(TAG_PANGTI));
+            translation.setText(results.get(position).get(TAG_TRANSLATION));
+            transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
+            pangti.setTypeface(anmolBani);
+            if (position == pangtiPosition) {
+                pangti.setTypeface(anmolBaniBold);
+                translation.setTypeface(null, Typeface.BOLD);
+                transliteration.setTypeface(null, Typeface.BOLD);
+            }
+            return v;
+        }
+
+        public boolean isEnabled(int position) {
+            return false;
         }
     }
 
@@ -253,6 +265,16 @@ public class ShabadActivity extends ActionBarActivity {
 //        hideTranslation = !hideTranslation;
 //        shabadDisplayAdapter.notify();
 //    }
+
+//        translationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    // The toggle is enabled
+//                } else {
+//                    // The toggle is disabled
+//                }
+//            }
+//        };
 
     String queryBuilder(String shabadId) {
         String urlString = "";
@@ -290,6 +312,7 @@ public class ShabadActivity extends ActionBarActivity {
     public String readJson(InputStream in) throws IOException, UnsupportedEncodingException {
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         int pangti_id = 0;
+        pangtiPosition = 0;
         String pangti = "Shabad";
         String translation = "Translation";
         String transliteration = "Transliteration";
@@ -301,7 +324,9 @@ public class ShabadActivity extends ActionBarActivity {
                 while (reader.hasNext()) {
                     String name = reader.nextName();
                     if (name.equals(TAG_PANGTI_ID)) {
-                        pangti_id = reader.nextInt();
+                        if (reader.nextInt() < targetPangti) {
+                            pangtiPosition ++;
+                        }
                     } else if (name.equals(TAG_PANGTI)) {
                         pangti = reader.nextString();
                     } else if (name.equals(TAG_TRANSLATION)) {
@@ -330,7 +355,6 @@ public class ShabadActivity extends ActionBarActivity {
                         reader.skipValue();
                     }
                 }
-                firstPangti = pangti_id;
                 shabad.put(TAG_PANGTI, pangti);
                 shabad.put(TAG_TRANSLATION, translation);
                 shabad.put(TAG_TRANSLITERATION, transliteration);
