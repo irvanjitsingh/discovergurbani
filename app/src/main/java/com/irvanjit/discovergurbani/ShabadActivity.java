@@ -84,6 +84,7 @@ public class ShabadActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
         setContentView(R.layout.activity_shabad);
         textView = (TextView) findViewById(R.id.result);
         Intent intent = getIntent();

@@ -37,7 +37,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
-        android:textColor="#FFD900"
+        android:textColor="#009DFF"
         android:textSize="12sp" />
 
     <!--<RelativeLayout android:id="@+id/meta"-->

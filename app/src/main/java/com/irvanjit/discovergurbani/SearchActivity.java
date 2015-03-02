@@ -126,6 +126,16 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -142,6 +152,8 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
 
