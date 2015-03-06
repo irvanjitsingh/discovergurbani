@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -69,6 +70,8 @@ public class ShabadActivity extends ActionBarActivity {
     private boolean hideTranslation = false;
     private int targetPangti;
     private int pangtiPosition;
+
+    private int pangtiFontSize;
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -180,6 +183,21 @@ public class ShabadActivity extends ActionBarActivity {
         }
     }
 
+    public void toggleFontSize(View view) {
+        int id = view.getId();
+        if (id == R.id.decreaseFontPangti) {
+            if (pangtiFontSize > 15) {
+                pangtiFontSize -= 2;
+                ((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
+            }
+        } else if (id == R.id.increaseFontPangti) {
+            if (pangtiFontSize < 30) {
+                pangtiFontSize += 2;
+                ((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
+            }
+        }
+    }
+
     private class DisplayShabadTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -206,6 +224,7 @@ public class ShabadActivity extends ActionBarActivity {
         }
         @Override
         protected void onPostExecute(String result) {
+            pangtiFontSize = 25;
             textView.setText(result);
             shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
@@ -249,6 +268,7 @@ public class ShabadActivity extends ActionBarActivity {
             translation.setText(results.get(position).get(TAG_TRANSLATION));
             transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
             pangti.setTypeface(anmolBani);
+            pangti.setTextSize(TypedValue.COMPLEX_UNIT_SP, pangtiFontSize);
             if (position == pangtiPosition) {
                 pangti.setTypeface(anmolBaniBold);
                 translation.setTypeface(null, Typeface.BOLD);

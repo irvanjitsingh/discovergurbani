@@ -20,5 +20,15 @@
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="10dp" />
+        <Button android:id="@+id/decreaseFontPangti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:onClick="toggleFontSize"/>
+        <Button android:id="@+id/increaseFontPangti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:onClick="toggleFontSize"/>
     </RelativeLayout>
 </LinearLayout>
