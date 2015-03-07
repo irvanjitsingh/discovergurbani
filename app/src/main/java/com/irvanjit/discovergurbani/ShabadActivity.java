@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -53,7 +54,6 @@ public class ShabadActivity extends ActionBarActivity {
     private static final String DEBUG_TAG = "HttpDebug";
 
     private static final String apiBase = "http://api.sikher.com/";
-    //    private static final String apiBase = "http://10.0.0.195:8000/";
     private TextView textView;
     private TextView translationText;
     private TextView pangti;
@@ -67,11 +67,11 @@ public class ShabadActivity extends ActionBarActivity {
     private DialogFragment displayOptions;
     private ListAdapter shabadDisplayAdapter;
     private Switch translationSwitch;
-    private boolean hideTranslation = false;
     private int targetPangti;
     private int pangtiPosition;
 
     private int pangtiFontSize;
+    private int pangtiVisibility;
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -109,8 +109,6 @@ public class ShabadActivity extends ActionBarActivity {
         } else {
             errorToast.show();
         }
-
-        Log.d("TARGET PANGTI::", String.valueOf(targetPangti));
     }
 
     @Override
@@ -141,6 +139,7 @@ public class ShabadActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     public static class DisplayOptionsFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -159,8 +158,8 @@ public class ShabadActivity extends ActionBarActivity {
 //                        }
 //                    });
             // Create the AlertDialog object and return it
-
             return builder.create();
+
 //            translationSwitch = (Switch) findViewById(R.id.translation_switch);
         }
 
@@ -185,12 +184,12 @@ public class ShabadActivity extends ActionBarActivity {
 
     public void toggleFontSize(View view) {
         int id = view.getId();
-        if (id == R.id.decreaseFontPangti) {
+        if (id == R.id.decreaseGurmukhiSize) {
             if (pangtiFontSize > 15) {
                 pangtiFontSize -= 2;
                 ((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
             }
-        } else if (id == R.id.increaseFontPangti) {
+        } else if (id == R.id.increaseGurmukhiSize) {
             if (pangtiFontSize < 30) {
                 pangtiFontSize += 2;
                 ((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
@@ -225,6 +224,7 @@ public class ShabadActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String result) {
             pangtiFontSize = 25;
+            pangtiVisibility = View.VISIBLE;
             textView.setText(result);
             shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
@@ -269,6 +269,7 @@ public class ShabadActivity extends ActionBarActivity {
             transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
             pangti.setTypeface(anmolBani);
             pangti.setTextSize(TypedValue.COMPLEX_UNIT_SP, pangtiFontSize);
+            pangti.setVisibility(pangtiVisibility);
             if (position == pangtiPosition) {
                 pangti.setTypeface(anmolBaniBold);
                 translation.setTypeface(null, Typeface.BOLD);
