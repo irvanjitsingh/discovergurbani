@@ -13,6 +13,10 @@
     <string name="menu_label_settings">Settings</string>
     <string name="menu_label_display_options">Display Options</string>
 
+    <string name="gurmukhiToggleLabel">\u0a15</string>
+    <string name="translationToggleLabel">A</string>
+    <string name="transliterationToggleLabel">\u0101</string>
+
     <string-array name="search_modes">
         <item name="0">1st Letter, Start</item>
         <item name="1">1st Letter, Any</item>
