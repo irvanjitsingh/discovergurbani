@@ -4,20 +4,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.JsonReader;
 import android.util.Log;
 import android.util.TypedValue;
@@ -29,8 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -42,20 +34,17 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class ShabadActivity extends ActionBarActivity {
+public class ShabadActivity extends ActionBarActivity{
     private static final String DEBUG_TAG = "HttpDebug";
 
     private static final String apiBase = "http://api.sikher.com/";
-    private TextView textView;
-    private TextView translationText;
+    private TextView errorMessage;
     private TextView pangti;
     private TextView translation;
     private TextView transliteration;
@@ -79,6 +68,9 @@ public class ShabadActivity extends ActionBarActivity {
     private int translationVisibility;
     private int transliterationVisibility;
 
+    private int previousDistanceFromFirstCellToTop;
+
+
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
     private static final String TAG_PANGTI = "text";
@@ -93,7 +85,7 @@ public class ShabadActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         setContentView(R.layout.activity_shabad);
-        textView = (TextView) findViewById(R.id.result);
+        errorMessage = (TextView) findViewById(R.id.result);
         Intent intent = getIntent();
         String shabadId = intent.getStringExtra(TAG_SHABAD);
         targetPangti = intent.getIntExtra("id", targetPangti);
@@ -133,7 +125,6 @@ public class ShabadActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            translation.setVisibility(View.GONE);
             return true;
         }
         if (id == R.id.action_display_options) {
@@ -162,6 +153,10 @@ public class ShabadActivity extends ActionBarActivity {
             WindowManager.LayoutParams params = window.getAttributes();
             window.setAttributes(params);
             setDialogPosition();
+            Dialog dialogView = getDialog();
+            TextView gurmukhiToggleLabel = (TextView) dialogView.findViewById(R.id.gurmukhiFontLabel);
+            Typeface anmolBani = Typeface.createFromAsset(((ShabadActivity)getActivity()).getAssets(), "fonts/AnmolUniBani-Bold.ttf");
+            gurmukhiToggleLabel.setTypeface(anmolBani);
         }
 
         private void setDialogPosition() {
@@ -251,9 +246,6 @@ public class ShabadActivity extends ActionBarActivity {
         protected String doInBackground(String... urls) {
 
             try {
-//                Request request = new Request(urls[0]);
-//                String result = readJson(request.downloadUrl());
-//                return readJson(request.downloadUrl());
                 return getData(urls[0]);
             } catch (IOException e) {
                 return "Could not load the shabad.";
@@ -273,7 +265,7 @@ public class ShabadActivity extends ActionBarActivity {
             transliterationVisibility = View.VISIBLE;
 
 
-            textView.setText(result);
+            errorMessage.setText(result);
             shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
                     R.layout.shabad_item, new String[]
@@ -318,13 +310,13 @@ public class ShabadActivity extends ActionBarActivity {
 
 
             transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
-            translation.setTextSize(TypedValue.COMPLEX_UNIT_SP, transliterationFontSize);
+            transliteration.setTextSize(TypedValue.COMPLEX_UNIT_SP, transliterationFontSize);
             transliteration.setVisibility(transliterationVisibility);
 
             if (highlightPangti && position == pangtiPosition) {
                 pangti.setTypeface(anmolBaniBold);
-                translation.setTypeface(null, Typeface.BOLD_ITALIC);
-                transliteration.setTypeface(null, Typeface.BOLD_ITALIC);
+//                translation.setTypeface(null, Typeface.BOLD_ITALIC);
+//                transliteration.setTypeface(null, Typeface.BOLD_ITALIC);
             }
             return v;
         }
@@ -333,24 +325,6 @@ public class ShabadActivity extends ActionBarActivity {
             return false;
         }
     }
-
-//    public void toggleTranslation(View view) {
-//        hideTranslation = !hideTranslation;
-//        shabadDisplayAdapter.notify();
-//    }
-
-//    public void setupSwitches() {
-//        translationSwitch = (Switch) findViewById(R.id.gurmukhiSwitch);
-//        translationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    Log.d("SWITCH", "ON");
-//                } else {
-//                    Log.d("SWITCH", "OFF");
-//                }
-//            }
-//        });
-//    }
 
     String queryBuilder(String shabadId) {
         String urlString = "";

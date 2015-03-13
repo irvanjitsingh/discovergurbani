@@ -46,7 +46,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     private static final String DEBUG_TAG = "HttpDebug";
 
     private SearchView searchView;
-//    private EditText query;
     private TextView resultMessage;
     private Toast toast;
     private ProgressDialog loading;
@@ -59,14 +58,11 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     private int[] shabadListValues;
     private String query;
 
-
     //default settings
     private String translationId = "13";
     private String transliterationId = "69";
     private int searchMode = 0;
     private static final String apiBase = "http://api.sikher.com/";
-//    private static final String apiBase = "http://10.0.0.195:8000/";
-//    private static final String apiBase = "http://127.0.0.1:8000/";
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -87,32 +83,12 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 
         //search page setup
 
-//        query = (EditText) findViewById(R.id.query);
         query = "";
         resultMessage = (TextView) findViewById(R.id.result);
 
 
         //Setup Shabad Results list
         setupShabadsListView();
-
-//        Intent intent = getIntent();
-//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//            String query = intent.getStringExtra(SearchManager.QUERY);
-//            doSearch(query);
-//        }
-
-        //keyboard search button
-//        query.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                boolean handled = false;
-//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                    getQuery(query);
-//                    handled = true;
-//                }
-//                return handled;
-//            }
-//        });
 
         //setup error toast
         Context context = getApplicationContext();
@@ -201,7 +177,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         searchView.setOnQueryTextListener(searchQueryListener);
 
         //appearance
-        searchView.setQueryHint(getString(R.string.search_hint_gurmukhi));
+        searchView.setQueryHint(getString(R.string.search_hint_english));
         searchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         searchView.setImeOptions(searchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
     }
@@ -317,24 +293,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             return v;
         }
     }
-
-//    public void doSearch(String query) {
-//        if (isConnected()) {
-//            new SearchShabadTask().execute(query);
-//        } else {
-//            toast.show();
-//        }
-//    }
-
-    //SearchBox handler
-//    public void getQuery(View view) {
-//        String stringUrl = query.getText().toString();
-//        if (isConnected()) {
-//            new SearchShabadTask().execute(stringUrl);
-//        } else {
-//            toast.show();
-//        }
-//    }
 
     public void searchForShabad(String query) {
         if (isConnected()) {
