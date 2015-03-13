@@ -31,3 +31,10 @@ Features
 - Explore the Raags (musical measures) of Siri Guru Granth Sahib Ji (coming soon(
 
 *Gurbani is indexed by Raag, and each Raag evokes different feelings and emotions associated with it, just as various genres of popular music evokes various feelings in the listener.
+
+
+
+Acknowledgements
+================
+
+The Discover Gurbani project is greatful, first and foremost, to Dhan Dhan Siri Guru Granth Sahib Ji Maharaj for their blessings for this seva to be carried out. We are also greatful to the Sikher project, whose GurbaniDB and open-source API was used to power this app, and the many other Sikhi and Gurbani projects out there that have worked to make the Gurus' teachings widely accessible.
