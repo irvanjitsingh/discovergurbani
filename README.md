@@ -2,12 +2,11 @@
 
 Discover, explore, and experience the Sikh Scriptures
 
+
 About
 =====
 
-Discover Gurbani is a search engine for the Scriptures of the Sikhs, the Siree Guru Granth Sahib Jee. Sikhs regard Siri Guru Granth Sahib Ji as the living embodiment of their Gurus, who laid out a path for Sikhs through their writings and life teachings. The  
-
-The Siri Guru Granth Sahib Ji is the collective writings of the Gurus along with several enlightened Saints of different faiths and backgrounds. 
+Discover Gurbani is a search engine for the Scriptures of the Sikhs, the Guru Granth Sahib Jee. Sikhs regard Siri Guru Granth Sahib Ji as the living embodiment of the Sikh Gurus. They are the collective writings of the Gurus along with several enlightened Saints of different faiths and backgrounds.
 
 These writings, known as Gurbani (pronounced gurbaanee), are central to the Sikh faith as they embody the teachings of the Gurus and were compiled and sealed by the Guru themselves. Gurbani is unique in that all of it is written in poetry, and assigned various rhythms and musical measures as it is meant to be sung.
 
@@ -26,9 +25,11 @@ Features
 
 - Read Siri Guru Granth Sahib Ji, Ang by Ang
 
-*The word Ang means limb, and since Sikhs see Siri Guru Granth Sahib Ji as the living embodiment of their Gurus' teachings, they see the pages of the Bir (manuscript) as limbs.
+*The word Ang translates to limb, and since Sikhs see Siri Guru Granth Sahib Ji as the living embodiment of their Gurus' teachings, they see the pages of the Bir (manuscript) as limbs.
 
-- Explore the Raags (musical measures) of Siri Guru Granth Sahib Ji (coming soon(
+- Take a Hukamnama: this is a means for one to communicate with Siri Guru Granth Sahib Ji and ask the Guru questions and receive guidance.
+
+- Explore the Raags (musical measures) of Siri Guru Granth Sahib Ji (coming soon)
 
 *Gurbani is indexed by Raag, and each Raag evokes different feelings and emotions associated with it, just as various genres of popular music evokes various feelings in the listener.
 
@@ -37,4 +38,4 @@ Features
 Acknowledgements
 ================
 
-The Discover Gurbani project is greatful, first and foremost, to Dhan Dhan Siri Guru Granth Sahib Ji Maharaj for their blessings for this seva to be carried out. We are also greatful to the Sikher project, whose GurbaniDB and open-source API was used to power this app, and the many other Sikhi and Gurbani projects out there that have worked to make the Gurus' teachings widely accessible.
+The Discover Gurbani project is grateful to the Sikher project, whose GurbaniDB platform was used to power this app, as well as the many other Gurbani/Sikhi-based projects out there that have worked to make the Gurus' teachings widely accessible.
