@@ -22,7 +22,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -62,19 +61,24 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     private String translationId = "13";
     private String transliterationId = "69";
     private int searchMode = 0;
+//    private int searchTranslation = 3;
+//    private int searchTransliteration = 4;
+    private int searchAng = 3;
     private static final String apiBase = "http://api.sikher.com/";
 
     //JSON Nodes
-    private static final String TAG_PANGTI_ID = "id";
-    private static final String TAG_PANGTI = "text";
-    private static final String TAG_SHABAD = "hymn";
-    private static final String TAG_ANG = "page";
-    private static final String TAG_SECTION = "section";
-    private static final String TAG_RAAG = "melody";
-    private static final String TAG_AUTHOR = "author";
-    private static final String TAG_TRANSLATION = "translation";
-    private static final String TAG_TRANSLITERATION = "transliteration";
-    private static final String TAG_META = "meta";
+    private static String TAG_PANGTI_ID = "id";
+    private static String TAG_PANGTI_ID_ALT = "id";
+    private static String TAG_PANGTI = "text";
+    private static String TAG_SHABAD = "hymn";
+    private static String TAG_ANG = "page";
+    private static String TAG_SECTION = "section";
+    private static String TAG_RAAG = "melody";
+    private static String TAG_AUTHOR = "author";
+    private static String TAG_TRANSLATION = "translation";
+    private static String TAG_TRANSLITERATION = "transliteration";
+    private static String TAG_META = "meta";
+    private static String TAG_GRANTH = "scripture";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,11 +159,16 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             }
         } else if (parent.getId() == R.id.searchmode_spinner) {
             searchMode = pos;
-            if (searchMode == 4) {
+            if (searchMode == searchAng) {
                 searchView.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
             } else {
                 searchView.setInputType(EditorInfo.TYPE_CLASS_TEXT);
             }
+//            if (searchMode == searchTranslation || searchMode == searchTransliteration) {
+//                TAG_PANGTI_ID_ALT = "scripture_id";
+//            } else {
+//                TAG_PANGTI_ID_ALT = "id";
+//            }
         }
     }
 
@@ -337,7 +346,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         try {
             String query = URLEncoder.encode(rawQuery, "utf-8");
             String searchModeString = "search/"+searchMode;
-            if (searchMode == 4) {
+            if (searchMode == searchAng) {
                 searchModeString = "page";
             }
             urlString = apiBase+searchModeString+"/"+query+"/"+translationId+"/"+transliterationId;
@@ -385,7 +394,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         String translation = "Translation";
         String transliteration = "Transliteration";
         String meta;
-
+        Log.d("PANGTI_ID", String.valueOf(pangti_id));
         try {
             reader.beginArray();
             while (reader.hasNext()) {

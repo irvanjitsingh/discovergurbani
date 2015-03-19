@@ -85,7 +85,7 @@ public class ShabadActivity extends ActionBarActivity{
         getSupportActionBar().setHomeButtonEnabled(true);
 
         setContentView(R.layout.activity_shabad);
-        errorMessage = (TextView) findViewById(R.id.result);
+
         Intent intent = getIntent();
         String shabadId = intent.getStringExtra(TAG_SHABAD);
         targetPangti = intent.getIntExtra("id", targetPangti);
@@ -125,6 +125,8 @@ public class ShabadActivity extends ActionBarActivity{
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
         if (id == R.id.action_display_options) {
@@ -155,7 +157,7 @@ public class ShabadActivity extends ActionBarActivity{
             setDialogPosition();
             Dialog dialogView = getDialog();
             TextView gurmukhiToggleLabel = (TextView) dialogView.findViewById(R.id.gurmukhiFontLabel);
-            Typeface anmolBani = Typeface.createFromAsset(((ShabadActivity)getActivity()).getAssets(), "fonts/AnmolUniBani-Bold.ttf");
+            Typeface anmolBani = Typeface.createFromAsset((getActivity()).getAssets(), "fonts/AnmolUniBani-Bold.ttf");
             gurmukhiToggleLabel.setTypeface(anmolBani);
         }
 

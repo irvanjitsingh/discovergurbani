@@ -30,8 +30,8 @@
     <string name="lang_Belarusian">"4}</string>
     <string name="lang_Bulgarian">"5}</string>
     <string name="lang_Catalan">"6}</string>
-    <string name="lang_Chinese_Simp">7</string>
-    <string name="lang_Chinese_Trad">8</string>
+    <string name="lang_ChineseSimplfied">7</string>
+    <string name="lang_ChineseTraditional">8</string>
     <string name="lang_Croatian">"9}</string>
     <string name="lang_Czech">10</string>
     <string name="lang_Danish">11</string>
@@ -44,7 +44,7 @@
     <string name="lang_Galician">18</string>
     <string name="lang_German">19</string>
     <string name="lang_Greek">20</string>
-    <string name="lang_Haitian_Creole">21</string>
+    <string name="lang_HaitianCreole">21</string>
     <string name="lang_Hebrew">22</string>
     <string name="lang_Hindi">23</string>
     <string name="lang_Hungarian">24</string>

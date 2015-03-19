@@ -2,13 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.irvanjit.discovergurbani.ShabadActivity">
-    <!--<item-->
-        <!--android:id="@+id/action_scan"-->
-        <!--app:showAsAction="ifRoom"-->
-        <!--android:title="display options"-->
-        <!--/>-->
+    <item
+        android:id="@+id/action_display_options"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_label_display_options"
+        />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_display_options" android:title="@string/menu_label_display_options"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
