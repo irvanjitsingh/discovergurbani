@@ -94,7 +94,7 @@ public class ShabadActivity extends ActionBarActivity{
         shabadList = new ArrayList<HashMap<String, String>>();
         shabadView = (ListView) findViewById(R.id.shabadview);
         displayOptions = new DisplayOptionsFragment();
-
+        errorMessage = (TextView) findViewById(R.id.shabadError);
         //setup error toast
         Context context = getApplicationContext();
         CharSequence connError = "Check network connection";
