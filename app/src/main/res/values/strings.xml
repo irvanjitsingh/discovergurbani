@@ -27,12 +27,25 @@
     </string-array>
     <string name="title_activity_pager">PagerActivity</string>
 
-
     <string name="title_section1">About</string>
     <string name="title_section2">Read</string>
     <string name="title_section3">Search</string>
     <string name="title_section4">Discover</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="about_page_text">
+        Vaheguru Ji Ka Khalsa, Vaheguru Ji Ki Fateh!
+    </string>
+
+    <string name="read_page_text">
+        Sehaj Paath
+    </string>
+
+    <string name="search_page_text">
+        Search
+    </string>
+
+    <string name="hukam_page_text">
+        Take a Hukamnama
+    </string>
 
 </resources>

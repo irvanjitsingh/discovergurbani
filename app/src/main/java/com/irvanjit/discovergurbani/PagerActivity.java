@@ -11,30 +11,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 public class PagerActivity extends ActionBarActivity implements ActionBar.TabListener {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
 
     @Override
@@ -77,7 +64,7 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         }
     }
 
-    public void startActivity(View view) {
+    public void launchSearchView(View view) {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
@@ -119,10 +106,6 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -131,9 +114,17 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return AboutPageFragment.newInstance();
+                case 1:
+                    return ReadPageFragment.newInstance();
+                case 2:
+                    return SearchPageFragment.newInstance();
+                case 3:
+                    return HukamPageFragment.newInstance();
+            }
+            return null;
         }
 
         @Override
@@ -159,37 +150,79 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    public static class AboutPageFragment extends Fragment {
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static AboutPageFragment newInstance() {
+            AboutPageFragment fragment = new AboutPageFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
-        public PlaceholderFragment() {
+        public AboutPageFragment() {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_pager, container, false);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_page_about, container, false);
             return rootView;
         }
     }
 
+    public static class ReadPageFragment extends Fragment {
+
+        public static ReadPageFragment newInstance() {
+            ReadPageFragment fragment = new ReadPageFragment();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public ReadPageFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_page_read, container, false);
+            return rootView;
+        }
+    }
+
+    public static class SearchPageFragment extends Fragment {
+
+        public static SearchPageFragment newInstance() {
+            SearchPageFragment fragment = new SearchPageFragment();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public SearchPageFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_page_search, container, false);
+            return rootView;
+        }
+    }
+
+    public static class HukamPageFragment extends Fragment {
+
+        public static HukamPageFragment newInstance() {
+            HukamPageFragment fragment = new HukamPageFragment();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public HukamPageFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_page_hukam, container, false);
+            return rootView;
+        }
+    }
 }
