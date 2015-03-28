@@ -64,7 +64,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 //    private int searchTranslation = 3;
 //    private int searchTransliteration = 4;
     private int searchAng = 3;
-    private static final String apiBase = "http://api.sikher.com/";
+    private static final String apiBase = "http://api.sikher.com";
 
     //JSON Nodes
     private static String TAG_PANGTI_ID = "id";
@@ -256,6 +256,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                 in.putExtra(TAG_PANGTI_ID, pangtiId);
                 in.putExtra(TAG_TRANSLATION, translationId);
                 in.putExtra(TAG_TRANSLITERATION, transliterationId);
+                in.putExtra("displayMode", 0);
                 startActivity(in);
             }
         });
@@ -349,7 +350,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             if (searchMode == searchAng) {
                 searchModeString = "page";
             }
-            urlString = apiBase+searchModeString+"/"+query+"/"+translationId+"/"+transliterationId;
+            urlString = apiBase+"/"+searchModeString+"/"+query+"/"+translationId+"/"+transliterationId;
         } catch (IOException e) {
             Log.d(DEBUG_TAG, e.toString());
             return null;

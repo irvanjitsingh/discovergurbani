@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,7 +44,7 @@ import java.util.HashMap;
 public class ShabadActivity extends ActionBarActivity{
     private static final String DEBUG_TAG = "HttpDebug";
 
-    private static final String apiBase = "http://api.sikher.com/";
+    private static final String apiBase = "http://api.sikher.com";
     private TextView errorMessage;
     private TextView pangti;
     private TextView translation;
@@ -55,10 +56,14 @@ public class ShabadActivity extends ActionBarActivity{
     private ProgressDialog loading;
     private DialogFragment displayOptions;
     private ListAdapter shabadDisplayAdapter;
-    private Switch translationSwitch;
     private boolean highlightPangti;
     private int targetPangti;
     private int pangtiPosition;
+    private int displayMode;
+    private int displayModeShabad = 0;
+    private int displayModeAng = 1;
+    private int displayModeHukamnama = 2;
+    private int angId = 1;
 
     private int pangtiFontSize;
     private int translationFontSize;
@@ -67,9 +72,6 @@ public class ShabadActivity extends ActionBarActivity{
     private int pangtiVisibility;
     private int translationVisibility;
     private int transliterationVisibility;
-
-    private int previousDistanceFromFirstCellToTop;
-
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -91,6 +93,7 @@ public class ShabadActivity extends ActionBarActivity{
         targetPangti = intent.getIntExtra("id", targetPangti);
         translationId = intent.getStringExtra(TAG_TRANSLATION);
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
+        displayMode = intent.getIntExtra("displayMode", displayMode);
         shabadList = new ArrayList<HashMap<String, String>>();
         shabadView = (ListView) findViewById(R.id.shabadview);
         displayOptions = new DisplayOptionsFragment();
@@ -106,7 +109,6 @@ public class ShabadActivity extends ActionBarActivity{
         } else {
             highlightPangti = true;
         }
-
         if (isConnected()) {
             new DisplayShabadTask().execute(shabadId);
         } else {
@@ -328,12 +330,29 @@ public class ShabadActivity extends ActionBarActivity{
         }
     }
 
-    String queryBuilder(String shabadId) {
-        String urlString = "";
+//    String queryBuilder(String shabadId) {
+//        String urlString = "";
+//        try {
+//            urlString = apiBase+""+shabadId+"/"+translationId+"/"+transliterationId;
+//        } catch (Exception e) {
+//            Log.d(DEBUG_TAG, e.toString());
+//        }
+//        return urlString;
+//    }
+
+    String queryBuilder(String shabadId) throws IOException {
+        String urlString;
         try {
-            urlString = apiBase+"hymn/"+shabadId+"/"+translationId+"/"+transliterationId;
+            String displayModeString = "hymn/"+shabadId;
+            if (displayMode == displayModeAng) {
+                displayModeString = "page/"+shabadId;
+            } else if (displayMode == displayModeHukamnama) {
+                displayModeString = "random/1";
+            }
+            urlString = apiBase+"/"+displayModeString+"/"+translationId+"/"+transliterationId;
         } catch (Exception e) {
             Log.d(DEBUG_TAG, e.toString());
+            return null;
         }
         return urlString;
     }

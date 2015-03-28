@@ -69,6 +69,16 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         startActivity(intent);
     }
 
+    public void launchShabadHukamnama(View view) {
+        Intent in = new Intent(this, ShabadActivity.class);
+        in.putExtra("hymn", "1");
+        in.putExtra("id", -1);
+        in.putExtra("translation", "13");
+        in.putExtra("transliteration", "69");
+        in.putExtra("displayMode", 2);
+        startActivity(in);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
