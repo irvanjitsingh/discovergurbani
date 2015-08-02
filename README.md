@@ -6,7 +6,7 @@ Discover, explore, and experience the Sikh Scriptures in in your native tounge.
 About
 =====
 
-Discover Gurbani is a search engine for the Sikh Scriptures, Siri Guru Granth Sahib Jee. They contain the writings of the Gurus as well as several other enlightened Saints of different faiths and backgrounds. Sikhs regard Siri Guru Granth Sahib Ji as their eternal Guru and the living embodiment of the Gurus' very soul.
+Discover Gurbani is a search engine for the Sikh Scriptures, Siri Guru Granth Sahib Jee. They contain the writings of the Gurus as well as several other enlightened Saints of different faiths and backgrounds. Sikhs regard Siri Guru Granth Sahib Ji as their eternal Guru and the living embodiment of the Gurus' spirit and soul.
 
 The writings, known as Gurbani (pronounced gurbaanee), are central to the Sikh faith as they embody the message of the Gurus and were compiled and sealed by the Guru themselves. Gurbani is unique in that all of it is written in poetic format; the hymns are assigned rhythms and musical scales, as they are meant to be sung.
 
@@ -23,9 +23,7 @@ Features
 
 *One of the many amazing qualities of Siri Guru Granth Sahib Ji is that it contains a brilliant but subtle indexing system. They can be searched by using the first 'letter' of each 'word' in a 'sentence'. In this manner, it often only takes 2-3 characters to narrow a search across 5894 hymns down to about a dozen or less.
 
-- Read Siri Guru Granth Sahib Ji, Ang by Ang
-
-*The word Ang translates to limb. Since Sikhs regard Siri Guru Granth Sahib Ji as the living embodiment of their Gurus' teachings, they refer to the physical pages of the manuscript (Bir) as limbs out of respect.
+- Read Siri Guru Granth Sahib Ji, from start to finish. When read at one's own pace, this is referred to as a Sehaj Paath
 
 - Discover the beauty of Siri Guru Granth Sahib Ji, Take a Hukamnama: this is a means for one to communicate with Siri Guru Granth Sahib Ji, to ask the Guru questions and receive guidance.
 
