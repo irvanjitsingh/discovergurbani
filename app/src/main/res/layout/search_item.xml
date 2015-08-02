@@ -14,7 +14,7 @@
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
         android:textSize="22sp"
-        android:textColor="#FF8000"/>
+        android:textColor="#ffffc200"/>
 
     <TextView
         android:id="@+id/transliteration"

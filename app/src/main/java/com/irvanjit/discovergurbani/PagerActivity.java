@@ -11,11 +11,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 public class PagerActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -65,8 +67,19 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
     }
 
     public void launchSearchView(View view) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
+        Intent in = new Intent(this, SearchActivity.class);
+        in.putExtra("displayMode", 0);
+        startActivity(in);
+    }
+
+    public void launchShabadView(View view) {
+        Intent in = new Intent(this, ShabadActivity.class);
+        in.putExtra("hymn", "1");
+        in.putExtra("id", -1);
+        in.putExtra("translation", "13");
+        in.putExtra("transliteration", "69");
+        in.putExtra("displayMode", 1);
+        startActivity(in);
     }
 
     public void launchShabadHukamnama(View view) {

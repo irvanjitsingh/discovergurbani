@@ -4,34 +4,6 @@
     android:layout_height="match_parent"
     android:configChanges="orientation|screenSize"
     tools:context=".SearchActivity">
-
-    <!--<RelativeLayout android:id="@+id/search_container"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:paddingLeft="8dp"-->
-        <!--android:paddingRight="8dp"-->
-        <!--android:paddingTop="@dimen/activity_vertical_margin">-->
-        <!--<RelativeLayout android:id="@+id/search_input_container"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-            <!--<EditText android:id="@+id/query"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_toLeftOf="@+id/send_query"-->
-                <!--android:hint="@string/search_hint_english"-->
-                <!--android:singleLine="true"-->
-                <!--android:imeOptions="actionSearch|flagNoExtractUi"-->
-                <!--android:inputType="text"/>-->
-            <!--<Button android:id="@+id/send_query"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:text="Search"-->
-                <!--android:onClick="getQuery" />-->
-        <!--</RelativeLayout>-->
-    <!--</RelativeLayout>-->
     <RelativeLayout android:id="@+id/spinners"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -36,7 +37,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,6 +50,7 @@ public class ShabadActivity extends ActionBarActivity{
     private TextView translation;
     private TextView transliteration;
     private ListView shabadView;
+    private String shabadId;
     private String translationId;
     private String transliterationId;
     private ArrayList<HashMap<String, String>> shabadList;
@@ -57,6 +58,7 @@ public class ShabadActivity extends ActionBarActivity{
     private DialogFragment displayOptions;
     private ListAdapter shabadDisplayAdapter;
     private boolean highlightPangti;
+    private boolean firstLoad = true;
     private int targetPangti;
     private int pangtiPosition;
     private int displayMode;
@@ -64,6 +66,7 @@ public class ShabadActivity extends ActionBarActivity{
     private int displayModeAng = 1;
     private int displayModeHukamnama = 2;
     private int angId = 1;
+    private Toast errorToast;
 
     private int pangtiFontSize;
     private int translationFontSize;
@@ -89,7 +92,7 @@ public class ShabadActivity extends ActionBarActivity{
         setContentView(R.layout.activity_shabad);
 
         Intent intent = getIntent();
-        String shabadId = intent.getStringExtra(TAG_SHABAD);
+        shabadId = intent.getStringExtra(TAG_SHABAD);
         targetPangti = intent.getIntExtra("id", targetPangti);
         translationId = intent.getStringExtra(TAG_TRANSLATION);
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
@@ -102,7 +105,7 @@ public class ShabadActivity extends ActionBarActivity{
         Context context = getApplicationContext();
         CharSequence connError = "Check network connection";
         int duration = Toast.LENGTH_SHORT;
-        Toast errorToast = Toast.makeText(context, connError, duration);
+        errorToast = Toast.makeText(context, connError, duration);
 
         if (targetPangti == -1) {
             highlightPangti = false;
@@ -114,6 +117,9 @@ public class ShabadActivity extends ActionBarActivity{
         } else {
             errorToast.show();
         }
+        firstLoad = false;
+//        getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -125,14 +131,21 @@ public class ShabadActivity extends ActionBarActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+//            startActivity(settingsIntent);
+//            return true;
+//        }
         if (id == R.id.action_display_options) {
             displayOptions.show(getSupportFragmentManager(), null);
+            return true;
+        }
+        if (id == R.id.action_previous_button) {
+            gotoNextShabad(shabadId, false);
+            return true;
+        }
+        if (id == R.id.action_next_button) {
+            gotoNextShabad(shabadId, true);
             return true;
         }
 
@@ -238,6 +251,10 @@ public class ShabadActivity extends ActionBarActivity{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            shabadList.clear();
+            if (displayMode != displayModeShabad || !firstLoad) {
+                highlightPangti = false;
+            }
             loading = new ProgressDialog(ShabadActivity.this);
             loading.setMessage("Loading");
             loading.setCancelable(true);
@@ -319,8 +336,9 @@ public class ShabadActivity extends ActionBarActivity{
 
             if (highlightPangti && position == pangtiPosition) {
                 pangti.setTypeface(anmolBaniBold);
-//                translation.setTypeface(null, Typeface.BOLD_ITALIC);
-//                transliteration.setTypeface(null, Typeface.BOLD_ITALIC);
+            }
+            if (!highlightPangti) {
+                pangti.setTypeface(anmolBani);
             }
             return v;
         }
@@ -339,8 +357,40 @@ public class ShabadActivity extends ActionBarActivity{
 //        }
 //        return urlString;
 //    }
+    private void gotoNextShabad(String id, boolean forward) {
+        int inc;
+        boolean enable = false;
+        int nextShabad = Integer.parseInt(id);
+        if (displayMode != displayModeShabad) {
+            if ((forward && nextShabad < 1430) || (!forward && nextShabad > 1)) {
+                enable = true;
+            }
+        } else if ((forward && nextShabad < 3620) || (!forward && nextShabad > 1)) {
+            enable = true;
+        } else if (displayMode == displayModeHukamnama) {
+            enable = false;
+        } else {
+            enable = false;
+        }
+        if (forward) {
+            inc = 1;
+        } else {
+            inc = -1;
+        }
+        if (enable) {
+            if (isConnected()) {
+                new DisplayShabadTask().execute(String.valueOf(nextShabad + inc));
+                try {
+                    shabadId = String.valueOf(Integer.parseInt(shabadId) + inc);
+                } catch (Exception e) {
+                }
+            } else {
+                errorToast.show();
+            }
+        }
+    }
 
-    String queryBuilder(String shabadId) throws IOException {
+    private String queryBuilder(String shabadId) throws IOException {
         String urlString;
         try {
             String displayModeString = "hymn/"+shabadId;

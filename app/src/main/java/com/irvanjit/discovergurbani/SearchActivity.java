@@ -103,6 +103,8 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         //misc. setup
         loading = new ProgressDialog(SearchActivity.this);
         setupSpinners();
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override

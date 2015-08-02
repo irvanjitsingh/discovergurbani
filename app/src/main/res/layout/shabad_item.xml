@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="2dp"
         android:paddingTop="2dp"
-        android:textColor="#ffff8000"/>
+        android:textColor="#ffffc200"/>
 
     <TextView
         android:id="@+id/transliteration"

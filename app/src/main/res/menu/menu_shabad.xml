@@ -2,11 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.irvanjit.discovergurbani.ShabadActivity">
+
+    <item
+        android:id="@+id/action_previous_button"
+        app:showAsAction="always"
+        android:title="@string/menu_label_previous_button" />
+    <item
+        android:id="@+id/action_next_button"
+        app:showAsAction="always"
+        android:title="@string/menu_label_next_button" />
     <item
         android:id="@+id/action_display_options"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_label_display_options"
-        />
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+        app:showAsAction="never"
+        android:title="@string/menu_label_display_options" />
 </menu>
