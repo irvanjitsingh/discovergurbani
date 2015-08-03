@@ -82,6 +82,7 @@ public class ShabadActivity extends ActionBarActivity{
     private static final String TAG_SHABAD = "hymn";
     private static final String TAG_TRANSLATION = "translation";
     private static final String TAG_TRANSLITERATION = "transliteration";
+    private static final String TAG_ANG = "page";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -367,8 +368,6 @@ public class ShabadActivity extends ActionBarActivity{
             }
         } else if ((forward && nextShabad < 3620) || (!forward && nextShabad > 1)) {
             enable = true;
-        } else if (displayMode == displayModeHukamnama) {
-            enable = false;
         } else {
             enable = false;
         }
@@ -449,6 +448,9 @@ public class ShabadActivity extends ActionBarActivity{
                         }
                     } else if (name.equals(TAG_PANGTI)) {
                         pangti = reader.nextString();
+                    } else if (displayMode == displayModeHukamnama && name.equals(TAG_ANG)) {
+                        shabadId = String.valueOf(reader.nextInt());
+                        displayMode = displayModeAng;
                     } else if (name.equals(TAG_TRANSLATION)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
