@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -204,7 +203,7 @@ public class ShabadActivity extends ActionBarActivity{
     public void toggleTranslationSize(View view) {
         int id = view.getId();
         if (id == R.id.decreaseTranslationSize) {
-            if (translationFontSize > 15) {
+            if (translationFontSize > 10) {
                 translationFontSize -= 2;
             }
         } else if (id == R.id.increaseTranslationSize) {
@@ -218,7 +217,7 @@ public class ShabadActivity extends ActionBarActivity{
     public void toggleTransliterationSize(View view) {
         int id = view.getId();
         if (id == R.id.decreaseTransliterationSize) {
-            if (transliterationFontSize > 15) {
+            if (transliterationFontSize > 10) {
                 transliterationFontSize -= 2;
             }
         } else if (id == R.id.increaseTransliterationSize) {
@@ -277,13 +276,13 @@ public class ShabadActivity extends ActionBarActivity{
         protected void onPostExecute(String result) {
 
             //set shabad display defaults
-            pangtiFontSize = 25;
+            pangtiFontSize = 22;
             pangtiVisibility = View.VISIBLE;
 
-            translationFontSize = 20;
+            translationFontSize = 14;
             translationVisibility = View.VISIBLE;
 
-            transliterationFontSize = 20;
+            transliterationFontSize = 18;
             transliterationVisibility = View.VISIBLE;
 
 

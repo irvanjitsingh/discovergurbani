@@ -3,6 +3,7 @@ package com.irvanjit.discovergurbani;
 import java.util.Locale;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -11,19 +12,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
 public class PagerActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
-
     ViewPager mViewPager;
 
     @Override
@@ -69,16 +72,6 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
     public void launchSearchView(View view) {
         Intent in = new Intent(this, SearchActivity.class);
         in.putExtra("displayMode", 0);
-        startActivity(in);
-    }
-
-    public void launchShabadView(View view) {
-        Intent in = new Intent(this, ShabadActivity.class);
-        in.putExtra("hymn", "1");
-        in.putExtra("id", -1);
-        in.putExtra("translation", "13");
-        in.putExtra("transliteration", "69");
-        in.putExtra("displayMode", 1);
         startActivity(in);
     }
 
@@ -188,11 +181,17 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_page_about, container, false);
+            Typeface anmolBani = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AnmolUniBani.ttf");
+            TextView welcomeText = (TextView)rootView.findViewById(R.id.about_page);
+            welcomeText.setTypeface(anmolBani);
             return rootView;
         }
     }
 
     public static class ReadPageFragment extends Fragment {
+
+        String translationId;
+        String transliterationId;
 
         public static ReadPageFragment newInstance() {
             ReadPageFragment fragment = new ReadPageFragment();
@@ -207,7 +206,66 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_page_read, container, false);
+            setupSpinners(rootView);
+            setupButton(rootView);
             return rootView;
+        }
+
+        void setupButton(View view){
+            Button button = (Button)view.findViewById(R.id.read_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent in = new Intent(getActivity(), ShabadActivity.class);
+                    in.putExtra("hymn", "1");
+                    in.putExtra("id", -1);
+                    in.putExtra("translation", translationId);
+                    in.putExtra("transliteration", transliterationId);
+                    in.putExtra("displayMode", 1);
+                    startActivity(in);
+                }
+            });
+        }
+
+        void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerAdapter);
+            spinner.setSelection(defaultValue);
+        }
+
+        void setupSpinners(View view) {
+            //SPINNERS
+            Spinner translationSpinner = (Spinner)view.findViewById(R.id.translation_spinner);
+            Spinner transliterationSpinner = (Spinner)view.findViewById(R.id.transliteration_spinner);
+            ArrayAdapter<CharSequence> translationAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.translation_strings, android.R.layout.simple_spinner_item);
+            ArrayAdapter<CharSequence> transliterationAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.transliteration_strings, android.R.layout.simple_spinner_item);
+            setupSpinner(translationSpinner, translationAdapter, 12);
+            setupSpinner(transliterationSpinner, transliterationAdapter, 14);
+            translationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String langName = "lang_" + parent.getItemAtPosition(position).toString().replaceAll(" ", "_");
+                    int strId = getResources().getIdentifier(langName, "string", getActivity().getPackageName());
+                    translationId = getString(strId);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            transliterationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String scriptName = "script_" + parent.getItemAtPosition(position).toString();
+                    int strId = getResources().getIdentifier(scriptName, "string", getActivity().getPackageName());
+                    transliterationId = getString(strId);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
         }
     }
 

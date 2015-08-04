@@ -4,16 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="1dp"
-    android:paddingBottom="1dp">
+    android:paddingRight="10dp">
 
     <TextView
         android:id="@+id/gurmukhi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp"
+        android:paddingBottom="0dp"
+        android:paddingTop="0dp"
         android:textColor="#ffffc200"/>
 
     <TextView
@@ -29,6 +27,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="2dp"
-        android:textColor="#ffacacac"/>
+        android:textColor="#9b9b9b"
+        android:paddingTop="2dp" />
 
 </LinearLayout>

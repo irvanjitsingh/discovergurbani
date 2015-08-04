@@ -103,7 +103,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         //misc. setup
         loading = new ProgressDialog(SearchActivity.this);
         setupSpinners();
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
@@ -191,6 +190,10 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         searchView.setQueryHint(getString(R.string.search_hint_english));
         searchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         searchView.setImeOptions(searchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+
+        TextView searchText = (TextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+        searchText.setTypeface(anmolBani);
     }
 
     private SearchView.OnQueryTextListener searchQueryListener = new SearchView.OnQueryTextListener() {

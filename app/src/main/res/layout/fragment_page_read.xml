@@ -29,13 +29,29 @@
         </RelativeLayout>
 
     </ScrollView>
-
+    <RelativeLayout android:id="@+id/spinners"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/read_text_scroll"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp">
+        <Spinner android:id="@+id/transliteration_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/translation_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/transliteration_spinner"
+            android:layout_toEndOf="@id/transliteration_spinner"/>
+    </RelativeLayout>
     <Button android:id="@+id/read_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/read_text_scroll"
+        android:layout_toEndOf="@+id/spinners"
+        android:layout_toRightOf="@+id/spinners"
         android:layout_centerHorizontal="true"
-        android:text="@string/read_button_text"
-        android:onClick="launchShabadView" />
+        android:text="@string/read_button_text" />
 
 </RelativeLayout>

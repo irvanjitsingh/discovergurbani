@@ -18,7 +18,8 @@
     <string name="gurmukhiToggleLabel">ਅ</string>
     <string name="translationToggleLabel">A</string>
     <string name="transliterationToggleLabel">\u0101</string>
-
+    <string name="increaseFontSizeLabel">+</string>
+    <string name="decreaseFontSizeLabel">-</string>
     <string-array name="search_modes">
         <item name="0">1st Letter, Start</item>
         <item name="1">1st Letter, Any</item>
@@ -43,11 +44,11 @@
     </string>
 
     <string name="search_page_text">
-        One of the many amazing qualities of Siri Guru Granth Sahib Ji is that it contains a brilliant but subtle indexing system.\n\nOne can search the Gurbani by using the first *letter* of each *word* in a *sentence*. In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less. Give it a try!
+        One of the many amazing qualities of Siri Guru Granth Sahib Ji is that they contain a brilliant but subtle indexing system.\n\nOne can search the Gurbani by using the first *letter* of each *word* in a *sentence*. In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less. Give it a try!\n\n**NOTE: Searching by Gurmukhi characters currently requires a Gurmukhi Keyboard (can be found on Play Store).
     </string>
 
     <string name="hukam_page_text">
-        For a Sikh, Siri Guru Granth Sahib Ji is not just a manuscript, but the very living embodiment of the Gurus spirit and soul. The wisdom and truth contained in Gurbani is a Sikhs first and foremost guide in life.\n\nOften a Sikh will seek the wisdom of the Guru regarding a personal matter. The process for doing so is called a Taking Hukamnama, wherein, after a small prayer, one will read from Guru Granth Sahib Ji from an arbitrary, random starting point. However, there is nothing arbitrary about the resulting hymn. A Sikh does not just speak to their Guru, the Guru speaks to the Sikh.
+        For a Sikh, Siri Guru Granth Sahib Ji is not just a manuscript, but the very living embodiment of the Gurus spirit and soul. The wisdom and truth contained in Gurbani is a Sikhs first and foremost guide in life.\n\nOften a Sikh will seek the wisdom of the Guru regarding a personal matter. The process for doing so is called Taking a Hukamnama, wherein, after a small prayer, one will read from Guru Granth Sahib Ji from an arbitrary starting point. However, there is nothing arbitrary about the resulting hymn. A Sikh does not just speak to their Guru, the Guru speaks to the Sikh.
     </string>
 
     <string name="read_button_text">Read</string>
