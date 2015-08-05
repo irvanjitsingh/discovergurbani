@@ -18,14 +18,20 @@
     <string name="gurmukhiToggleLabel">ਅ</string>
     <string name="translationToggleLabel">A</string>
     <string name="transliterationToggleLabel">\u0101</string>
+
     <string name="increaseFontSizeLabel">+</string>
     <string name="decreaseFontSizeLabel">-</string>
+
+    <string name="searchModeLabel">Search Mode</string>
+    <string name="transliterationLabel">Transliteration</string>
+    <string name="translationLabel">Translation</string>
+
     <string-array name="search_modes">
         <item name="0">1st Letter, Start</item>
         <item name="1">1st Letter, Any</item>
         <item name="2">Word, Any</item>
-        <!--<item name="3">Word, Translation</item>-->
-        <!--<item name="4">Word, Transliteration</item>-->
+        <item name="3">Word, Translation</item>
+        <item name="4">Word, Transliteration</item>
         <item name="5">Ang</item>
     </string-array>
     <string name="title_activity_pager">PagerActivity</string>

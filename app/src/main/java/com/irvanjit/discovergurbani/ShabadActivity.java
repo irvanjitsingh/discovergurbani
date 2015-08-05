@@ -280,7 +280,7 @@ public class ShabadActivity extends ActionBarActivity{
             try {
                 return getData(urls[0]);
             } catch (IOException e) {
-                return "Could not load the shabad.";
+                return "Could not load the shabad";
             }
         }
         @Override

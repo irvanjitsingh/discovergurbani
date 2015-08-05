@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="6dp"
         android:paddingBottom="2dp"
-        android:textColor="#ffffc200"/>
+        android:textColor="@color/gurbani_basanti"/>
 
     <TextView
         android:id="@+id/gurmukhi"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="6dp"
         android:paddingBottom="2dp"
-        android:textColor="#ffffc200"/>
+        android:textColor="@color/gurbani_basanti"/>
 
     <TextView
         android:id="@+id/transliteration"
@@ -28,14 +28,14 @@
         android:layout_height="wrap_content"
         android:paddingTop="0dp"
         android:paddingBottom="2dp"
-        android:textColor="#ffffffff"/>
+        android:textColor="@color/transliteration_white"/>
 
     <TextView
         android:id="@+id/translation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#9b9b9b"
         android:paddingTop="2dp"
-        android:paddingBottom="6dp"/>
+        android:paddingBottom="6dp"
+        android:textColor="@color/translation_grey"/>
 
 </LinearLayout>

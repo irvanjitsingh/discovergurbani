@@ -61,9 +61,9 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     private String translationId = "13";
     private String transliterationId = "69";
     private int searchMode = 0;
-//    private int searchTranslation = 3;
-//    private int searchTransliteration = 4;
-    private int searchAng = 3;
+    private int searchTranslation = 3;
+    private int searchTransliteration = 4;
+    private int searchAng = 5;
     private static final String apiBase = "http://api.sikher.com";
 
     //JSON Nodes
@@ -78,7 +78,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     private static String TAG_TRANSLATION = "translation";
     private static String TAG_TRANSLITERATION = "transliteration";
     private static String TAG_META = "meta";
-    private static String TAG_GRANTH = "scripture";
+    private static String TAG_SCRIPTURE = "scripture";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,11 +161,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             } else {
                 searchView.setInputType(EditorInfo.TYPE_CLASS_TEXT);
             }
-//            if (searchMode == searchTranslation || searchMode == searchTransliteration) {
-//                TAG_PANGTI_ID_ALT = "scripture_id";
-//            } else {
-//                TAG_PANGTI_ID_ALT = "id";
-//            }
         }
     }
 
@@ -390,7 +385,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         String translation = "Translation";
         String transliteration = "Transliteration";
         String meta;
-        Log.d("PANGTI_ID", String.valueOf(pangti_id));
         try {
             reader.beginArray();
             while (reader.hasNext()) {
@@ -401,7 +395,13 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                     if (name.equals(TAG_PANGTI_ID)) {
                         pangti_id = reader.nextInt();
                     } else if (name.equals(TAG_PANGTI)) {
-                        pangti = reader.nextString();
+                        if (searchMode == searchTranslation) {
+                            translation = reader.nextString();
+                        } else if (searchMode == searchTransliteration) {
+                            transliteration = reader.nextString();
+                        } else {
+                            pangti = reader.nextString();
+                        }
                     } else if (name.equals(TAG_SHABAD)) {
                         shabad_id = reader.nextInt();
                     } else if (name.equals(TAG_ANG)) {
@@ -425,6 +425,36 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                             String subName = reader.nextName();
                             if (subName.equals(TAG_PANGTI)) {
                                 transliteration = reader.nextString();
+                            } else {
+                                reader.skipValue();
+                            }
+                        }
+                        reader.endObject();
+                    } else if (name.equals(TAG_SCRIPTURE)) {
+                        reader.beginObject();
+                        while (reader.hasNext()) {
+                            String subName = reader.nextName();
+                            if (subName.equals(TAG_PANGTI_ID)) {
+                                pangti_id = reader.nextInt();
+                            } else if (subName.equals(TAG_PANGTI)) {
+                                pangti = reader.nextString();
+                            } else if (subName.equals(TAG_SHABAD)) {
+                                shabad_id = reader.nextInt();
+                            } else if (subName.equals(TAG_ANG)) {
+                                ang = reader.nextInt();
+                            } else if (subName.equals(TAG_SECTION)) {
+                                section = reader.nextString();
+                            } else if (subName.equals(TAG_AUTHOR)) {
+                                reader.beginObject();
+                                while (reader.hasNext()) {
+                                    String secondSubName = reader.nextName();
+                                    if (secondSubName.equals(TAG_AUTHOR)) {
+                                        author = reader.nextString();
+                                    } else {
+                                        reader.skipValue();
+                                    }
+                                }
+                                reader.endObject();
                             } else {
                                 reader.skipValue();
                             }

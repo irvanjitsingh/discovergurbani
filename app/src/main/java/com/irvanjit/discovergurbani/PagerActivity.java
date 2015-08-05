@@ -181,7 +181,7 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_page_about, container, false);
-            Typeface anmolBani = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AnmolUniBani.ttf");
+            Typeface anmolBani = Typeface.createFromAsset(getActivity().getAssets(), "fonts/AnmolUni.ttf");
             TextView welcomeText = (TextView)rootView.findViewById(R.id.about_page);
             welcomeText.setTypeface(anmolBani);
             return rootView;

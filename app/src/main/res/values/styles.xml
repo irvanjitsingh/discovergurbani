@@ -1,7 +1,4 @@
 <resources>
-    <color name="primary">#9AA0B9</color>
-    <color name="primary_dark">#7A8094</color>
-    <color name="pangti_highlighted">#AD9300</color>
     <!-- Base application theme. -->
     <style name="Theme_Dark" parent="Theme.AppCompat">
         <item name="android:backgroundDimEnabled">false</item>
@@ -20,4 +17,8 @@
         <!--<item name="android:colorAccent">@color/accent</item>-->
     </style>
 
+    <color name="gurbani_basanti">#ffffc200</color>
+    <color name="transliteration_white">#dddddd</color>
+    <color name="translation_grey">#7A8094</color>
+    <color name="metadata_blue">#0095ff</color>
 </resources>
