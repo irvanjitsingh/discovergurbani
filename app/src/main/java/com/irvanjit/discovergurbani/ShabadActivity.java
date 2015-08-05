@@ -46,6 +46,7 @@ public class ShabadActivity extends ActionBarActivity{
     private static final String apiBase = "http://api.sikher.com";
     private TextView errorMessage;
     private TextView pangti;
+    private TextView laridaar;
     private TextView translation;
     private TextView transliteration;
     private ListView shabadView;
@@ -64,20 +65,22 @@ public class ShabadActivity extends ActionBarActivity{
     private int displayModeShabad = 0;
     private int displayModeAng = 1;
     private int displayModeHukamnama = 2;
-    private int angId = 1;
     private Toast errorToast;
 
     private int pangtiFontSize;
+    private int laridaarFontSize;
     private int translationFontSize;
     private int transliterationFontSize;
 
     private int pangtiVisibility;
+    private int laridaarVisibility;
     private int translationVisibility;
     private int transliterationVisibility;
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
     private static final String TAG_PANGTI = "text";
+    private static final String TAG_LARIDAAR = "original";
     private static final String TAG_SHABAD = "hymn";
     private static final String TAG_TRANSLATION = "translation";
     private static final String TAG_TRANSLITERATION = "transliteration";
@@ -118,7 +121,6 @@ public class ShabadActivity extends ActionBarActivity{
             errorToast.show();
         }
         firstLoad = false;
-//        getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
@@ -191,10 +193,12 @@ public class ShabadActivity extends ActionBarActivity{
         if (id == R.id.decreaseGurmukhiSize) {
             if (pangtiFontSize > 15) {
                 pangtiFontSize -= 2;
+                laridaarFontSize -= 2;
             }
         } else if (id == R.id.increaseGurmukhiSize) {
             if (pangtiFontSize < 30) {
                 pangtiFontSize += 2;
+                laridaarFontSize += 2;
             }
         }
         ((SimpleAdapter) shabadView.getAdapter()).notifyDataSetChanged();
@@ -231,14 +235,21 @@ public class ShabadActivity extends ActionBarActivity{
     public void toggleText(View view) {
         int id = view.getId();
         int setVisible;
+        int setSwap;
         boolean switchOn = ((Switch) view).isChecked();
         if (switchOn) {
             setVisible = View.VISIBLE;
         } else {
             setVisible = View.GONE;
         }
+        if (switchOn) {
+            setSwap = View.GONE;
+        } else {
+            setSwap = View.VISIBLE;
+        }
         if (id == R.id.gurmukhiSwitch) {
             pangtiVisibility = setVisible;
+            laridaarVisibility = setSwap;
         } else if (id == R.id.translationSwitch) {
             translationVisibility = setVisible;
         } else if (id == R.id.transliterationSwitch) {
@@ -279,19 +290,21 @@ public class ShabadActivity extends ActionBarActivity{
             pangtiFontSize = 22;
             pangtiVisibility = View.VISIBLE;
 
-            translationFontSize = 14;
-            translationVisibility = View.VISIBLE;
+            laridaarFontSize = 22;
+            laridaarVisibility = View.GONE;
 
-            transliterationFontSize = 18;
+            transliterationFontSize = 16;
             transliterationVisibility = View.VISIBLE;
 
+            translationFontSize = 14;
+            translationVisibility = View.VISIBLE;
 
             errorMessage.setText(result);
             shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
                     R.layout.shabad_item, new String[]
-                    {TAG_PANGTI, TAG_TRANSLATION, TAG_TRANSLITERATION},
-                    new int[] { R.id.pangti, R.id.translation, R.id.transliteration});
+                    {TAG_PANGTI, TAG_LARIDAAR, TAG_TRANSLATION, TAG_TRANSLITERATION},
+                    new int[] { R.id.pangti, R.id.laridaar, R.id.translation, R.id.transliteration});
             shabadView.setAdapter(shabadDisplayAdapter);
 
             //set position to correct tukh
@@ -314,9 +327,10 @@ public class ShabadActivity extends ActionBarActivity{
             View v = view;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.search_item, null);
+                v = vi.inflate(R.layout.shabad_item, null);
             }
-            pangti = (TextView) v.findViewById(R.id.pangti);
+            pangti = (TextView) v.findViewById(R.id.gurmukhi);
+            laridaar = (TextView) v.findViewById(R.id.laridaar);
             translation = (TextView) v.findViewById(R.id.translation);
             transliteration = (TextView) v.findViewById(R.id.transliteration);
 
@@ -324,11 +338,14 @@ public class ShabadActivity extends ActionBarActivity{
             pangti.setTypeface(anmolBani);
             pangti.setTextSize(TypedValue.COMPLEX_UNIT_SP, pangtiFontSize);
             pangti.setVisibility(pangtiVisibility);
+            laridaar.setText(results.get(position).get(TAG_LARIDAAR));
+            laridaar.setTypeface(anmolBani);
+            laridaar.setTextSize(TypedValue.COMPLEX_UNIT_SP, laridaarFontSize);
+            laridaar.setVisibility(laridaarVisibility);
 
             translation.setText(results.get(position).get(TAG_TRANSLATION));
             translation.setTextSize(TypedValue.COMPLEX_UNIT_SP, translationFontSize);
             translation.setVisibility(translationVisibility);
-
 
             transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
             transliteration.setTextSize(TypedValue.COMPLEX_UNIT_SP, transliterationFontSize);
@@ -348,15 +365,6 @@ public class ShabadActivity extends ActionBarActivity{
         }
     }
 
-//    String queryBuilder(String shabadId) {
-//        String urlString = "";
-//        try {
-//            urlString = apiBase+""+shabadId+"/"+translationId+"/"+transliterationId;
-//        } catch (Exception e) {
-//            Log.d(DEBUG_TAG, e.toString());
-//        }
-//        return urlString;
-//    }
     private void gotoNextShabad(String id, boolean forward) {
         int inc;
         boolean enable = false;
@@ -432,6 +440,7 @@ public class ShabadActivity extends ActionBarActivity{
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         pangtiPosition = 0;
         String pangti = "Shabad";
+        String laridaar = "Shabad-Laridaar";
         String translation = "Translation";
         String transliteration = "Transliteration";
         try {
@@ -447,6 +456,8 @@ public class ShabadActivity extends ActionBarActivity{
                         }
                     } else if (name.equals(TAG_PANGTI)) {
                         pangti = reader.nextString();
+                    } else if (name.equals(TAG_LARIDAAR)) {
+                        laridaar = reader.nextString();
                     } else if (displayMode == displayModeHukamnama && name.equals(TAG_ANG)) {
                         shabadId = String.valueOf(reader.nextInt());
                         displayMode = displayModeAng;
@@ -477,6 +488,7 @@ public class ShabadActivity extends ActionBarActivity{
                     }
                 }
                 shabad.put(TAG_PANGTI, pangti);
+                shabad.put(TAG_LARIDAAR, laridaar);
                 shabad.put(TAG_TRANSLATION, translation);
                 shabad.put(TAG_TRANSLITERATION, transliteration);
                 shabadList.add(shabad);

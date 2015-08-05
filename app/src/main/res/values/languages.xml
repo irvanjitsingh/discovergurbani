@@ -30,8 +30,8 @@
     <string name="lang_Belarusian">"4}</string>
     <string name="lang_Bulgarian">"5}</string>
     <string name="lang_Catalan">"6}</string>
-    <string name="lang_ChineseSimplfied">7</string>
-    <string name="lang_ChineseTraditional">8</string>
+    <string name="lang_ChineseSimpl">7</string>
+    <string name="lang_ChineseTrad">8</string>
     <string name="lang_Croatian">"9}</string>
     <string name="lang_Czech">10</string>
     <string name="lang_Danish">11</string>
@@ -110,8 +110,8 @@
         <item name="4">Belarusian</item>
         <item name="5">Bulgarian</item>
         <item name="6">Catalan</item>
-        <item name="7">ChineseSimplified</item>
-        <item name="8">ChineseTraditional</item>
+        <item name="7">ChineseSimpl</item>
+        <item name="8">ChineseTrad</item>
         <item name="9">Croatian</item>
         <item name="10">Czech</item>
         <item name="11">Danish</item>

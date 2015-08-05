@@ -126,12 +126,8 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
             startActivity(settingsIntent);
@@ -192,7 +188,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         searchView.setImeOptions(searchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
 
         TextView searchText = (TextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+        Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUni.ttf");
         searchText.setTypeface(anmolBani);
     }
 
@@ -296,9 +292,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             TextView translation = (TextView) v.findViewById(R.id.translation);
             TextView transliteration = (TextView) v.findViewById(R.id.transliteration);
             TextView meta = (TextView) v.findViewById(R.id.meta);
-//            TextView ang = (TextView) v.findViewById(R.id.ang);
-//            TextView author = (TextView) v.findViewById(R.id.author);
-//            TextView section = (TextView) v.findViewById(R.id.section);
 
             pangti.setText(results.get(position).get(TAG_PANGTI));
             pangti.setTypeface(anmolBaniBold);
@@ -330,9 +323,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         @Override
         protected String doInBackground(String... urls) {
             try {
-//                Request request = new Request(urls[0]);
-//                String result = readJson(request.downloadUrl());
-//                return readJson(request.downloadUrl());
                 return getData(urls[0]);
             } catch (IOException e) {
                 return "No shabads found, check your query";
@@ -460,11 +450,12 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
                 shabad.put(TAG_PANGTI, pangti);
                 shabad.put(TAG_TRANSLATION, translation);
                 shabad.put(TAG_TRANSLITERATION, transliteration);
-                String respectSuffix = ", ";
-                meta = author+respectSuffix+"Ang "+String.valueOf(ang)+ ", "+section;
+                if (author.equals("None")) {
+                    meta = "Ang "+String.valueOf(ang)+ " | "+section;
+                } else {
+                    meta = author+" Ji | Ang "+String.valueOf(ang)+ " | "+section;
+                }
                 shabad.put(TAG_META, meta);
-//                shabad.put(TAG_SECTION, section);
-//                shabad.put(TAG_AUTHOR, author);
                 shabadList.add(shabad);
                 reader.endObject();
             }
