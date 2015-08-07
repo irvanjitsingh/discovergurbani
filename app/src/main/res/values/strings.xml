@@ -49,6 +49,8 @@
         When Siri Guru Granth Sahib Ji is read from start to finish, but at one’s own pace, it is referred to as a Sehaj Paath. Try reading!
     </string>
 
+    <string name="read_edit_text">(1&#8211;1430)</string>
+
     <string name="search_page_text">
         One of the many amazing qualities of Siri Guru Granth Sahib Ji is that they contain a brilliant but subtle indexing system.\n\nOne can search the Gurbani by using the first *letter* of each *word* in a *sentence*. In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less. Give it a try!\n\n**NOTE: Searching by Gurmukhi characters currently requires a Gurmukhi Keyboard (can be found on Play Store).
     </string>

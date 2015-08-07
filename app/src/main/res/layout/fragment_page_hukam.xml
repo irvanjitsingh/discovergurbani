@@ -1,41 +1,44 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    android:weightSum="1"
     tools:context="com.irvanjit.discovergurbani.PagerActivity$HukamPageFragment">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/hukam_text_scroll"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin">
-
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/hukam_text_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <TextView android:id="@+id/hukam_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/hukam_page_text"
-                android:maxLines = "50"
                 android:scrollbars = "vertical"
                 android:textSize="15sp"/>
+        </ScrollView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:gravity="center_horizontal">
+        <Button android:id="@+id/hukam_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hukam_button_text"
+            android:onClick="launchShabadHukamnama"/>
+    </LinearLayout>
 
-        </RelativeLayout>
-
-    </ScrollView>
-
-    <Button android:id="@+id/hukam_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/hukam_text_scroll"
-        android:layout_centerHorizontal="true"
-        android:text="@string/hukam_button_text"
-        android:onClick="launchShabadHukamnama" />
-
-</RelativeLayout>
+</LinearLayout>

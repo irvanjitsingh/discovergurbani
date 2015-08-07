@@ -15,21 +15,21 @@
         <TextView android:id="@+id/searchmode_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.3"
             android:text="@string/searchModeLabel"
             android:textSize="11sp"
             android:gravity="center" />
         <TextView android:id="@+id/transliteration_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.325"
+            android:layout_weight="0.3"
             android:textSize="11sp"
             android:text="@string/transliterationLabel"
             android:gravity="center" />
         <TextView android:id="@+id/translation_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.325"
+            android:layout_weight="0.3"
             android:textSize="11sp"
             android:text="@string/translationLabel"
             android:gravity="center" />
@@ -44,15 +44,15 @@
         <Spinner android:id="@+id/searchmode_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"/>
+            android:layout_weight="0.3"/>
         <Spinner android:id="@+id/transliteration_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.325"/>
+            android:layout_weight="0.3"/>
         <Spinner android:id="@+id/translation_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.325"/>
+            android:layout_weight="0.3"/>
     </LinearLayout>
 
     <TextView android:id="@+id/result"
