@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -89,6 +91,13 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         startActivity(in);
     }
 
+    public void hideKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -116,6 +125,10 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -227,6 +240,7 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
 
         void setupButton(View view) {
             angField = (EditText)view.findViewById(R.id.ang_number);
+            angField.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
             Button button = (Button)view.findViewById(R.id.read_button);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -240,7 +254,7 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
                         toast.show();
                     } else {
                         Intent in = new Intent(getActivity(), ShabadActivity.class);
-                        in.putExtra("hymn", "1");
+                        in.putExtra("hymn", angNumber);
                         in.putExtra("id", -1);
                         in.putExtra("translation", translationId);
                         in.putExtra("transliteration", transliterationId);

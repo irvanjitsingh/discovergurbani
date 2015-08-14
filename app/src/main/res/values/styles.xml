@@ -1,20 +1,9 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme_Dark" parent="Theme.AppCompat">
-        <item name="android:backgroundDimEnabled">false</item>
-        <!--<item name="android:colorPrimary">@color/primary</item>-->
-        <!--   darker variant for the status bar and contextual app bars -->
-        <!--<item name="android:colorPrimaryDark">@color/primary_dark</item>-->
-        <!--   theme UI controls like checkboxes and text fields -->
-        <!--<item name="android:colorAccent">@color/accent</item>-->
+    <style name="Theme_Dark" parent="Base.Theme.AppCompat">
     </style>
 
-    <style name="Theme_Light" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!--<item name="android:colorPrimary">@color/primary</item>-->
-        <!--   darker variant for the status bar and contextual app bars -->
-        <!--<item name="android:colorPrimaryDark">@color/primary_dark</item>-->
-        <!--   theme UI controls like checkboxes and text fields -->
-        <!--<item name="android:colorAccent">@color/accent</item>-->
+    <style name="Theme_Dark_v2" parent="Base.V21.Theme.AppCompat">
+
     </style>
 
     <color name="gurbani_basanti">#ffffc200</color>

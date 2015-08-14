@@ -22,6 +22,7 @@
     <string name="increaseFontSizeLabel">+</string>
     <string name="decreaseFontSizeLabel">-</string>
 
+    <string name="angNumberLabel">Ang Number</string>
     <string name="searchModeLabel">Search Mode</string>
     <string name="transliterationLabel">Transliteration</string>
     <string name="translationLabel">Translation</string>
@@ -58,6 +59,11 @@
     <string name="hukam_page_text">
         For a Sikh, Siri Guru Granth Sahib Ji is not just a manuscript, but the very living embodiment of the Gurus spirit and soul. The wisdom and truth contained in Gurbani is a Sikhs first and foremost guide in life.\n\nOften a Sikh will seek the wisdom of the Guru regarding a personal matter. The process for doing so is called Taking a Hukamnama, wherein, after a small prayer, one will read from Guru Granth Sahib Ji from an arbitrary starting point. However, there is nothing arbitrary about the resulting hymn. A Sikh does not just speak to their Guru, the Guru speaks to the Sikh.
     </string>
+
+    <string name="display_options_gurbani">ਲੋਗੁਜਾਨੈਇਹੁਗੀਤੁਹੈਇਹੁਤਉਬ੍ਰਹਮਬੀਚਾਰ॥</string>
+
+    <string name="headerAngLabel">Ang: </string>
+    <string name="headerRaagLabel">Raag/Section: </string>
 
     <string name="read_button_text">Read</string>
     <string name="search_button_text">Search</string>

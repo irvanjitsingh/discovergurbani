@@ -179,7 +179,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 
         //appearance
         searchView.setQueryHint(getString(R.string.search_hint_english));
-        searchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         searchView.setImeOptions(searchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
 
         TextView searchText = (TextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
@@ -277,7 +276,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         }
 
         public View getView(int position, View view, ViewGroup parent) {
-            Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani-Bold.ttf");
+            Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
             View v = view;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -289,7 +288,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
             TextView meta = (TextView) v.findViewById(R.id.meta);
 
             pangti.setText(results.get(position).get(TAG_PANGTI));
-            pangti.setTypeface(anmolBaniBold);
+            pangti.setTypeface(anmolBani);
             translation.setText(results.get(position).get(TAG_TRANSLATION));
             transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
             meta.setText(results.get(position).get(TAG_META));

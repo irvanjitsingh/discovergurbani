@@ -15,4 +15,8 @@
         android:id="@+id/action_display_options"
         app:showAsAction="never"
         android:title="@string/menu_label_display_options" />
+    <!--<item-->
+        <!--android:id="@+id/action_settings"-->
+        <!--app:showAsAction="never"-->
+        <!--android:title="@string/menu_label_settings" />-->
 </menu>

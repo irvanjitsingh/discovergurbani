@@ -4,8 +4,6 @@
     tools:context="com.irvanjit.discovergurbani.SearchActivity">
     <item android:id="@+id/action_search"
         android:title="@string/action_settings"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:paddingBottom="2dip"
         android:paddingTop="6dip"
-        android:textSize="22sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:textColor="@color/gurbani_basanti"/>
 
     <TextView

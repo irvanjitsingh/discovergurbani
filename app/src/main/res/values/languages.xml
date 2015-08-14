@@ -24,15 +24,15 @@
     <string name="script_Thaana">75</string>
     <string name="script_Thai">76</string>
 
-    <string name="lang_Afrikaans">"1}</string>
-    <string name="lang_Albanian">"2}</string>
-    <string name="lang_Arabic">"3}</string>
-    <string name="lang_Belarusian">"4}</string>
-    <string name="lang_Bulgarian">"5}</string>
-    <string name="lang_Catalan">"6}</string>
+    <string name="lang_Afrikaans">"1</string>
+    <string name="lang_Albanian">2</string>
+    <string name="lang_Arabic">3</string>
+    <string name="lang_Belarusian">4</string>
+    <string name="lang_Bulgarian">5</string>
+    <string name="lang_Catalan">6</string>
     <string name="lang_ChineseSimpl">7</string>
     <string name="lang_ChineseTrad">8</string>
-    <string name="lang_Croatian">"9}</string>
+    <string name="lang_Croatian">9</string>
     <string name="lang_Czech">10</string>
     <string name="lang_Danish">11</string>
     <string name="lang_Dutch">12</string>
