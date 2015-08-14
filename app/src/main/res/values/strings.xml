@@ -11,9 +11,11 @@
     <string name="search_hint_gurmukhi">ਸੇਰਚ ਗੁਰਬਾਣੀ</string>
 
     <string name="menu_label_settings">Settings</string>
-    <string name="menu_label_display_options">Display</string>
+    <string name="menu_label_reset">Reset Display</string>
+    <string name="menu_label_display_options">Tweak Display</string>
     <string name="menu_label_previous_button">Prev</string>
     <string name="menu_label_next_button">Next</string>
+    <string name="menu_label_laridaar">Larivaar</string>
 
     <string name="gurmukhiToggleLabel">ਅ</string>
     <string name="translationToggleLabel">A</string>
@@ -26,6 +28,8 @@
     <string name="searchModeLabel">Search Mode</string>
     <string name="transliterationLabel">Transliteration</string>
     <string name="translationLabel">Translation</string>
+    <string name="transliterationLabelAlt">Transliteration (Script)</string>
+    <string name="translationLabelAlt">Translation (Language)</string>
 
     <string-array name="search_modes">
         <item name="0">1st Letter, Start</item>

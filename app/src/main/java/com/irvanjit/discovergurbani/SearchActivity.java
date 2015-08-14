@@ -128,11 +128,11 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+//            startActivity(settingsIntent);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

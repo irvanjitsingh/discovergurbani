@@ -10,4 +10,5 @@
     <color name="transliteration_white">#dddddd</color>
     <color name="translation_grey">#7A8094</color>
     <color name="metadata_blue">#0095ff</color>
+    <color name="errorMessage">#ff8e7b</color>
 </resources>

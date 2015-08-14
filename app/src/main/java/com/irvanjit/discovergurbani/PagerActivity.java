@@ -81,16 +81,6 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         startActivity(in);
     }
 
-    public void launchShabadHukamnama(View view) {
-        Intent in = new Intent(this, ShabadActivity.class);
-        in.putExtra("hymn", "1");
-        in.putExtra("id", -1);
-        in.putExtra("translation", "13");
-        in.putExtra("transliteration", "69");
-        in.putExtra("displayMode", 2);
-        startActivity(in);
-    }
-
     public void hideKeyboard() {
         if(getCurrentFocus()!=null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -112,10 +102,9 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -328,6 +317,9 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
 
     public static class HukamPageFragment extends Fragment {
 
+        String translationId;
+        String transliterationId;
+
         public static HukamPageFragment newInstance() {
             HukamPageFragment fragment = new HukamPageFragment();
             Bundle args = new Bundle();
@@ -341,7 +333,65 @@ public class PagerActivity extends ActionBarActivity implements ActionBar.TabLis
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_page_hukam, container, false);
+            setupSpinners(rootView);
+            setupButton(rootView);
             return rootView;
+        }
+
+        void setupButton(View view) {
+            Button button = (Button)view.findViewById(R.id.hukam_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent in = new Intent(getActivity(), ShabadActivity.class);
+                    in.putExtra("hymn", "1");
+                    in.putExtra("id", -1);
+                    in.putExtra("translation", translationId);
+                    in.putExtra("transliteration", transliterationId);
+                    in.putExtra("displayMode", 2);
+                    startActivity(in);
+                }
+            });
+        }
+
+        void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerAdapter);
+            spinner.setSelection(defaultValue);
+        }
+
+        void setupSpinners(View view) {
+            //SPINNERS
+            Spinner translationSpinner = (Spinner)view.findViewById(R.id.translation_spinner);
+            Spinner transliterationSpinner = (Spinner)view.findViewById(R.id.transliteration_spinner);
+            ArrayAdapter<CharSequence> translationAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.translation_strings, android.R.layout.simple_spinner_item);
+            ArrayAdapter<CharSequence> transliterationAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.transliteration_strings, android.R.layout.simple_spinner_item);
+            setupSpinner(translationSpinner, translationAdapter, 12);
+            setupSpinner(transliterationSpinner, transliterationAdapter, 14);
+            translationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String langName = "lang_" + parent.getItemAtPosition(position).toString().replaceAll(" ", "_");
+                    int strId = getResources().getIdentifier(langName, "string", getActivity().getPackageName());
+                    translationId = getString(strId);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+            transliterationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String scriptName = "script_" + parent.getItemAtPosition(position).toString();
+                    int strId = getResources().getIdentifier(scriptName, "string", getActivity().getPackageName());
+                    transliterationId = getString(strId);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
         }
     }
 }

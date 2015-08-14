@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -32,6 +33,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -67,8 +69,10 @@ public class ShabadActivity extends ActionBarActivity{
     private ListAdapter shabadDisplayAdapter;
     private Toast errorToast;
     private View mDecorView;
+    private boolean laridaarMode;
     private boolean highlightPangti;
     private boolean firstLoad = true;
+    private boolean shabadError;
     private int targetPangti;
     private int pangtiPosition;
     private int displayMode;
@@ -86,6 +90,19 @@ public class ShabadActivity extends ActionBarActivity{
     private int laridaarVisibility;
     private int translationVisibility;
     private int transliterationVisibility;
+
+    private final int defaultPangtiFontSize = 22;
+    private final int defaultTransliterationFontSize = 16;
+    private final int defaultTranslationFontSize = 14;
+
+    private final int defaultPangtiVisibility = View.VISIBLE;
+    private final int defaultLaridaarVisibility = View.GONE;
+    private final int defaultTranslationVisibility = View.VISIBLE;;
+    private final int defaultTransliterationVisibility = View.VISIBLE;;
+    private final boolean defaultLaridaarEnabled = false;;
+
+
+    public static final String PREFS_NAME = "DisplayPreferences";
 
     //JSON Nodes
     private static final String TAG_PANGTI_ID = "id";
@@ -118,13 +135,25 @@ public class ShabadActivity extends ActionBarActivity{
         shabadView = (ListView) findViewById(R.id.shabadview);
 
         //setup sirlekh header
-        errorMessage = (TextView) findViewById(R.id.shabadError);
-        errorMessage.setVisibility(View.GONE);
         TypedValue tv = new TypedValue();
         if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
         {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
+
+        //setup display preferences preferences
+        SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
+
+        pangtiFontSize = displaySettings.getInt("pangtiFontSize", defaultPangtiFontSize);
+        laridaarFontSize = pangtiFontSize;
+        transliterationFontSize = displaySettings.getInt("transliterationFontSize", defaultTransliterationFontSize);
+        translationFontSize = displaySettings.getInt("translationFontSize", defaultTranslationFontSize);
+
+        pangtiVisibility = displaySettings.getInt("pangtiVisibility", defaultPangtiVisibility);
+        laridaarVisibility = displaySettings.getInt("laridaarVisibility", defaultLaridaarVisibility);
+        transliterationVisibility = displaySettings.getInt("transliterationVisibility", defaultTransliterationVisibility);
+        translationVisibility = displaySettings.getInt("translationVisibility", defaultTranslationVisibility);
+        laridaarMode = displaySettings.getBoolean("laridaarMode", defaultLaridaarEnabled);
 
         //setup display options
         //        displayOptions = new DisplayOptionsFragment();
@@ -140,9 +169,16 @@ public class ShabadActivity extends ActionBarActivity{
         if (resourceId > 0) {
             bottomBarHeight = resources.getDimensionPixelSize(resourceId);
         }
-        bottomText.setHeight(bottomBarHeight+2);
+        bottomText.setHeight(bottomBarHeight + 2);
         TextView gurmukhiToggleLabel = (TextView) findViewById(R.id.gurmukhiFontLabel);
         gurmukhiToggleLabel.setTypeface(anmolBold);
+
+        Switch gurmukhiSwitch = (Switch) findViewById(R.id.gurmukhiSwitch);
+        Switch transliterationSwitch = (Switch) findViewById(R.id.transliterationSwitch);
+        Switch translationSwitch = (Switch) findViewById(R.id.translationSwitch);
+        gurmukhiSwitch.setChecked(pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE);
+        transliterationSwitch.setChecked(transliterationVisibility == View.VISIBLE);
+        translationSwitch.setChecked(translationVisibility == View.VISIBLE);
 
         //setup shabad scrolling
         mDecorView = getWindow().getDecorView();
@@ -197,6 +233,26 @@ public class ShabadActivity extends ActionBarActivity{
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        //save preferences
+        SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = displaySettings.edit();
+
+        editor.putBoolean("laridaarMode", laridaarMode);
+        editor.putInt("pangtiFontSize", pangtiFontSize);
+        editor.putInt("transliterationFontSize", transliterationFontSize);
+        editor.putInt("translationFontSize", translationFontSize);
+        editor.putInt("pangtiVisibility", pangtiVisibility);
+        editor.putInt("laridaarVisibility", laridaarVisibility);
+        editor.putInt("transliterationVisibility", transliterationVisibility);
+        editor.putInt("translationVisibility", translationVisibility);
+
+        editor.apply();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_shabad, menu);
         return true;
@@ -205,14 +261,22 @@ public class ShabadActivity extends ActionBarActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+//            startActivity(settingsIntent);
+//            return true;
+//        }
         if (id == R.id.action_display_options) {
             displayOptionsView.setVisibility(View.VISIBLE);
 //            displayOptions.show(getSupportFragmentManager(), null);
+            return true;
+        }
+        if (id == R.id.action_laridaar) {
+            toggleLaridaar();
+            return true;
+        }
+        if (id == R.id.action_reset) {
+            resetDisplaySettings();
             return true;
         }
         if (id == R.id.action_previous_button) {
@@ -283,6 +347,37 @@ public class ShabadActivity extends ActionBarActivity{
 //        }
 //    }
 
+    public void toggleLaridaar() {
+        laridaarMode = !laridaarMode;
+        laridaarSetup();
+        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+    }
+
+    public void laridaarSetup() {
+        if (pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE) {
+            if (laridaarMode) {
+                pangtiVisibility = View.GONE;
+                laridaarVisibility = View.VISIBLE;
+            } else {
+                pangtiVisibility = View.VISIBLE;
+                laridaarVisibility = View.GONE;
+            }
+        }
+    }
+
+    public void resetDisplaySettings() {
+        laridaarMode = defaultLaridaarEnabled;
+        pangtiFontSize = defaultPangtiFontSize;
+        laridaarFontSize = defaultPangtiFontSize;
+        translationFontSize = defaultTranslationFontSize;
+        transliterationFontSize = defaultTransliterationFontSize;
+        pangtiVisibility = defaultPangtiVisibility;
+        laridaarVisibility = defaultLaridaarVisibility;
+        translationVisibility = defaultTranslationVisibility;
+        transliterationVisibility = defaultTransliterationVisibility;
+        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+    }
+
     public void toggleGurmukhiSize(View view) {
         int id = view.getId();
         if (id == R.id.decreaseGurmukhiSize) {
@@ -331,21 +426,18 @@ public class ShabadActivity extends ActionBarActivity{
     public void toggleText(View view) {
         int id = view.getId();
         int setVisible;
-        int setSwap;
         boolean switchOn = ((Switch) view).isChecked();
         if (switchOn) {
             setVisible = View.VISIBLE;
         } else {
             setVisible = View.GONE;
         }
-        if (switchOn) {
-            setSwap = View.GONE;
-        } else {
-            setSwap = View.VISIBLE;
-        }
         if (id == R.id.gurmukhiSwitch) {
             pangtiVisibility = setVisible;
-            laridaarVisibility = setSwap;
+            laridaarVisibility = setVisible;
+            if (switchOn) {
+                laridaarSetup();
+            }
         } else if (id == R.id.translationSwitch) {
             translationVisibility = setVisible;
         } else if (id == R.id.transliterationSwitch) {
@@ -365,6 +457,9 @@ public class ShabadActivity extends ActionBarActivity{
                 shabadHeader.setPadding(15, actionBarHeight + (actionBarHeight / 2) + 10, 15, 15);
                 shabadView.addHeaderView(shabadHeader);
             }
+            errorMessage = (TextView)findViewById(R.id.shabadError);
+            errorMessage.setVisibility(View.GONE);
+            shabadError = false;
             shabadList.clear();
             if (displayMode != displayModeShabad || !firstLoad) {
                 highlightPangti = false;
@@ -383,33 +478,26 @@ public class ShabadActivity extends ActionBarActivity{
             try {
                 return getData(urls[0]);
             } catch (IOException e) {
-                return "Could not load the shabad";
+                shabadError = true;
+                return "An error occurred. Could not load the shabad.";
             }
         }
         @Override
         protected void onPostExecute(String result) {
-            errorMessage.setText(result);
 
+            if (shabadError) {
+                errorMessage.setVisibility(View.VISIBLE);
+                errorMessage.setText(result);
+            }
+
+            //set header text
             ang = (TextView) findViewById(R.id.metaAng);
             raag = (TextView) findViewById(R.id.metaSection);
 //            author = (TextView) findViewById(R.id.metaAuthor);
-
             ang.setText(angString);
             raag.setText(raagString);
 
-            //set shabad display defaults
-            pangtiFontSize = 22;
-            pangtiVisibility = View.VISIBLE;
-
-            laridaarFontSize = 22;
-            laridaarVisibility = View.GONE;
-
-            transliterationFontSize = 16;
-            transliterationVisibility = View.VISIBLE;
-
-            translationFontSize = 14;
-            translationVisibility = View.VISIBLE;
-
+            //init shabad adapter
             shabadDisplayAdapter = new ShabadDisplayAdapter(
                     ShabadActivity.this, shabadList,
                     R.layout.shabad_item, new String[]
@@ -523,6 +611,7 @@ public class ShabadActivity extends ActionBarActivity{
             Log.d(DEBUG_TAG, e.toString());
             return null;
         }
+        Log.d("URL ______", urlString);
         return urlString;
     }
 
