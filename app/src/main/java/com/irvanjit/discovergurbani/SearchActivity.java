@@ -8,8 +8,8 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.JsonReader;
 import android.util.Log;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class SearchActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class SearchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String DEBUG_TAG = "HttpDebug";
 
@@ -68,7 +68,6 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
 
     //JSON Nodes
     private static String TAG_PANGTI_ID = "id";
-    private static String TAG_PANGTI_ID_ALT = "id";
     private static String TAG_PANGTI = "text";
     private static String TAG_SHABAD = "hymn";
     private static String TAG_ANG = "page";
@@ -86,10 +85,8 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         setContentView(R.layout.activity_search);
 
         //search page setup
-
         query = "";
         resultMessage = (TextView) findViewById(R.id.result);
-
 
         //Setup Shabad Results list
         setupShabadsListView();
@@ -129,7 +126,7 @@ public class SearchActivity extends ActionBarActivity implements AdapterView.OnI
         int id = item.getItemId();
 
 //        if (id == R.id.action_settings) {
-//            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
+//            Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
 //            startActivity(settingsIntent);
 //            return true;
 //        }

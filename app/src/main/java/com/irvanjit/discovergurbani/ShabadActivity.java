@@ -1,7 +1,5 @@
 package com.irvanjit.discovergurbani;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +7,16 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.os.PowerManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
 import android.util.Log;
 import android.util.TypedValue;
@@ -24,6 +26,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -33,7 +36,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,10 +45,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class ShabadActivity extends ActionBarActivity{
+public class ShabadActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "HttpDebug";
+    private static final String KEY_PREF_DISPLAY_WAKE = "pref_display_wake";
 
     private static final String apiBase = "http://api.sikher.com";
+    private static final String audioBase = "http://media.sikher.com/audio";
     private TextView errorMessage;
     private TextView pangti;
     private TextView laridaar;
@@ -62,13 +66,16 @@ public class ShabadActivity extends ActionBarActivity{
     private String angString;
     private String raagString;
     private String authorString;
+    private String audioUrl;
     private ArrayList<HashMap<String, String>> shabadList;
     private ProgressDialog loading;
-    private DialogFragment displayOptions;
     private LinearLayout displayOptionsView;
     private ListAdapter shabadDisplayAdapter;
+    private MediaPlayer shabadAudio;
+    private WifiManager.WifiLock wifiLock;
     private Toast errorToast;
     private View mDecorView;
+    private boolean displayWakeMode;
     private boolean laridaarMode;
     private boolean highlightPangti;
     private boolean firstLoad = true;
@@ -141,6 +148,15 @@ public class ShabadActivity extends ActionBarActivity{
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
 
+        //setup general preferences
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        displayWakeMode = sharedPref.getBoolean(SettingsActivity.KEY_PREF_DISPLAY_WAKE, false);
+
+        if (displayWakeMode) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
         //setup display preferences preferences
         SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
 
@@ -200,11 +216,9 @@ public class ShabadActivity extends ActionBarActivity{
                     if (this.height < height) {
                         //scroll up
                         showSystemUI();
-                        Log.v("SCROLL", "Scrolled up");
                     } else if (this.height > height) {
                         //scroll down
                         hideSystemUI();
-                        Log.v("SCROLL", "Scrolled down");
                     }
                 }
                 return false;
@@ -212,10 +226,9 @@ public class ShabadActivity extends ActionBarActivity{
         });
 
         //setup error toast
-        Context context = getApplicationContext();
         CharSequence connError = "Check network connection";
         int duration = Toast.LENGTH_SHORT;
-        errorToast = Toast.makeText(context, connError, duration);
+        errorToast = Toast.makeText(getApplicationContext(), connError, duration);
 
         if (targetPangti == -1) {
             highlightPangti = false;
@@ -235,7 +248,10 @@ public class ShabadActivity extends ActionBarActivity{
     @Override
     protected void onStop() {
         super.onStop();
-
+        stopAudioStream();
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
         //save preferences
         SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = displaySettings.edit();
@@ -253,22 +269,63 @@ public class ShabadActivity extends ActionBarActivity{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (displayWakeMode) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
+        super.onPause();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_shabad, menu);
         return true;
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem startAction = menu.findItem(R.id.action_audio_start);
+        MenuItem stopAction = menu.findItem(R.id.action_audio_stop);
+        MenuItem pauseAction = menu.findItem(R.id.action_audio_pause);
+
+        if (shabadAudio != null) {
+            if (shabadAudio.isPlaying()) {
+                startAction.setEnabled(false);
+                stopAction.setEnabled(true);
+                pauseAction.setEnabled(true);
+            } else {
+                startAction.setEnabled(true);
+                pauseAction.setEnabled(false);
+            }
+        } else {
+            stopAction.setEnabled(false);
+            pauseAction.setEnabled(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            Intent settingsIntent = new Intent(getApplicationContext(), MainSettingsActivity.class);
-//            startActivity(settingsIntent);
-//            return true;
-//        }
+
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
         if (id == R.id.action_display_options) {
             displayOptionsView.setVisibility(View.VISIBLE);
-//            displayOptions.show(getSupportFragmentManager(), null);
             return true;
         }
         if (id == R.id.action_laridaar) {
@@ -287,11 +344,111 @@ public class ShabadActivity extends ActionBarActivity{
             gotoNextShabad(shabadId, true);
             return true;
         }
+        if (id == R.id.action_audio_start) {
+            if (shabadAudio != null) {
+                resumeAudioStream();
+            } else {
+                startAudioStream();
+            }
+            return true;
+        }
+        if (id == R.id.action_audio_stop) {
+            if (shabadAudio != null) {
+                if (shabadAudio.isPlaying()) {
+                    stopAudioStream();
+                }
+            }
+            return true;
+        }
+        if (id == R.id.action_audio_pause) {
+            if (shabadAudio != null) {
+                if (shabadAudio.isPlaying()) {
+                    pauseAudioStream();
+                }
+            }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    // This snippet hides the system bars.
+    public void startAudioStream() {
+        shabadAudio = new MediaPlayer();
+        shabadAudio.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        shabadAudio.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        audioUrl = audioBase +"/sggsj/sggsj-"+angString+".mp3";
+        Toast.makeText(this, "Starting audio stream", Toast.LENGTH_SHORT).show();
+        try {
+            shabadAudio.setDataSource(audioUrl);
+            shabadAudio.prepareAsync();
+        } catch (IOException e) {
+            Toast.makeText(this, "An error occurred with the stream", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        shabadAudio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer player) {
+                player.start();
+            }
+        });
+
+        wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+                .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+
+        if (wifiLock != null) {
+            wifiLock.acquire();
+        }
+        this.invalidateOptionsMenu();
+    }
+
+    public void stopAudioStream() {
+        if (shabadAudio != null) {
+            Toast.makeText(this, "Stopping playback", Toast.LENGTH_SHORT).show();
+            shabadAudio.stop();
+            shabadAudio.release();
+            shabadAudio = null;
+        }
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
+        this.invalidateOptionsMenu();
+    }
+
+    public void pauseAudioStream() {
+        if (shabadAudio != null) {
+            if (shabadAudio.isPlaying()) {
+                Toast.makeText(this, "Pausing playback", Toast.LENGTH_SHORT).show();
+                shabadAudio.pause();
+            }
+        }
+        if (wifiLock != null) {
+            wifiLock.release();
+        }
+        this.invalidateOptionsMenu();
+    }
+
+    public void resumeAudioStream() {
+        if (shabadAudio != null) {
+            if (!shabadAudio.isPlaying()) {
+                Toast.makeText(this, "Resuming playback", Toast.LENGTH_SHORT).show();
+                shabadAudio.start();
+            }
+        }
+        this.invalidateOptionsMenu();
+    }
+
+    //excessive noise handler
+    public class MusicIntentReceiver extends android.content.BroadcastReceiver {
+        @Override
+        public void onReceive(Context ctx, Intent intent) {
+            if (intent.getAction().equals(
+                    android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+                stopAudioStream();
+            }
+        }
+    }
+
     private void hideSystemUI() {
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
@@ -313,39 +470,6 @@ public class ShabadActivity extends ActionBarActivity{
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
-
-//    public static class DisplayOptionsFragment extends DialogFragment {
-//        @Override
-//        public Dialog onCreateDialog(Bundle savedInstanceState) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//            LayoutInflater inflater = getActivity().getLayoutInflater();
-//            View displayView = inflater.inflate(R.layout.shabad_display_options, null);
-//            builder.setView(displayView);
-//            return builder.create();
-//        }
-//
-//        @Override
-//        public void onStart() {
-//            super.onStart();
-//            Window window = getDialog().getWindow();
-//            WindowManager.LayoutParams params = window.getAttributes();
-//            window.setAttributes(params);
-//            setDialogPosition();
-//            Dialog dialogView = getDialog();
-//            TextView gurmukhiToggleLabel = (TextView) dialogView.findViewById(R.id.gurmukhiFontLabel);
-//            Typeface anmolBani = Typeface.createFromAsset((getActivity()).getAssets(), "fonts/AnmolUniBani-Bold.ttf");
-//            gurmukhiToggleLabel.setTypeface(anmolBani);
-//        }
-//
-//        private void setDialogPosition() {
-//            Window window = getDialog().getWindow();
-//            window.setGravity(Gravity.BOTTOM);
-//
-//            WindowManager.LayoutParams params = window.getAttributes();
-//            params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-//            window.setAttributes(params);
-//        }
-//    }
 
     public void toggleLaridaar() {
         laridaarMode = !laridaarMode;
@@ -375,7 +499,15 @@ public class ShabadActivity extends ActionBarActivity{
         laridaarVisibility = defaultLaridaarVisibility;
         translationVisibility = defaultTranslationVisibility;
         transliterationVisibility = defaultTransliterationVisibility;
+
         ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+
+        Switch gurmukhiSwitch = (Switch) findViewById(R.id.gurmukhiSwitch);
+        Switch transliterationSwitch = (Switch) findViewById(R.id.transliterationSwitch);
+        Switch translationSwitch = (Switch) findViewById(R.id.translationSwitch);
+        gurmukhiSwitch.setChecked(pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE);
+        transliterationSwitch.setChecked(transliterationVisibility == View.VISIBLE);
+        translationSwitch.setChecked(translationVisibility == View.VISIBLE);
     }
 
     public void toggleGurmukhiSize(View view) {
@@ -391,7 +523,6 @@ public class ShabadActivity extends ActionBarActivity{
                 laridaarFontSize += 2;
             }
         }
-//        ((SimpleAdapter) shabadView.getAdapter()).notifyDataSetChanged();
         ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
     }
 
@@ -567,6 +698,8 @@ public class ShabadActivity extends ActionBarActivity{
     }
 
     private void gotoNextShabad(String id, boolean forward) {
+
+        stopAudioStream();
         int inc;
         boolean enable = false;
         int nextShabad = Integer.parseInt(id);

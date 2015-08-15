@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -28,12 +29,14 @@
             android:name=".ShabadActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".SearchActivity" >
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SearchActivity" />
+
         </activity>
         <activity
-            android:name=".MainSettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_main_settings"
             android:parentActivityName=".SearchActivity" >
             <meta-data
@@ -49,6 +52,12 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+        <receiver android:name=".ShabadActivity$MusicIntentReceiver">
+            <intent-filter>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

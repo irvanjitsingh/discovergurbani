@@ -15,10 +15,22 @@
         android:id="@+id/action_next_button"
         app:showAsAction="always"
         android:title="@string/menu_label_next_button" />
-    <!--<item-->
-    <!--android:id="@+id/action_settings"-->
-    <!--app:showAsAction="never"-->
-    <!--android:title="@string/menu_label_settings" />-->
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:title="@string/menu_label_settings" />
+    <item
+        android:id="@+id/action_audio_start"
+        app:showAsAction="never"
+        android:title="@string/menu_label_audio_start" />
+    <item
+        android:id="@+id/action_audio_pause"
+        app:showAsAction="never"
+        android:title="@string/menu_label_audio_pause" />
+    <item
+        android:id="@+id/action_audio_stop"
+        app:showAsAction="never"
+        android:title="@string/menu_label_audio_stop" />
     <item
         android:id="@+id/action_reset"
         app:showAsAction="never"
