@@ -5,36 +5,34 @@
     tools:context="com.irvanjit.discovergurbani.ShabadActivity">
     <ListView
             android:id="@+id/shabadview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:divider="@android:color/transparent"
             android:dividerHeight="2sp"/>
     <LinearLayout android:id="@+id/display_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="10dp"
         android:layout_alignParentBottom="true"
         android:background="@color/background_floating_material_dark"
         android:gravity="center_horizontal">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <LinearLayout android:id="@+id/display_options_wrapper"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_vertical|center_horizontal">
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="1.00001"
                 android:gravity="center_vertical|center_horizontal">
                 <LinearLayout android:id="@+id/gurmukhiSwitchWrapper"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal">
-                    <Switch
+                    <android.support.v7.widget.SwitchCompat
                         android:id="@+id/gurmukhiSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -45,17 +43,17 @@
                 </LinearLayout>
                 <View android:id="@+id/gurmukhiDivider"
                     android:layout_width="1dp"
-                    android:layout_height="fill_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="0.00001"
                     android:background="@color/ripple_material_dark" />
                 <LinearLayout android:id="@+id/gurmukhiFontToggles"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp">
-                    <Button android:id="@+id/decreaseGurmukhiSize"
+                    <android.support.v7.widget.AppCompatButton android:id="@+id/decreaseGurmukhiSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="toggleGurmukhiSize"
@@ -69,7 +67,7 @@
                         android:textSize="23sp"
                         android:paddingLeft="7dp"
                         android:paddingRight="7dp" />
-                    <Button android:id="@+id/increaseGurmukhiSize"
+                    <android.support.v7.widget.AppCompatButton android:id="@+id/increaseGurmukhiSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="toggleGurmukhiSize"
@@ -79,17 +77,17 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="1.00001"
                 android:gravity="center_vertical|center_horizontal">
                 <LinearLayout android:id="@+id/transliterationSwitchWrapper"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal">
-                    <Switch
+                    <android.support.v7.widget.SwitchCompat
                         android:id="@+id/transliterationSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -100,11 +98,11 @@
                 </LinearLayout>
                 <View android:id="@+id/transliterationDivider"
                     android:layout_width="1dp"
-                    android:layout_height="fill_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="0.00001"
                     android:background="@color/ripple_material_dark" />
                 <LinearLayout android:id="@+id/transliterationFontToggles"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal"
@@ -135,17 +133,17 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="1.00001"
                 android:gravity="center_vertical|center_horizontal">
                 <LinearLayout android:id="@+id/visibilityToggles"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal">
-                    <Switch android:id="@+id/translationSwitch"
+                    <android.support.v7.widget.SwitchCompat android:id="@+id/translationSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textOff="Off"
@@ -155,11 +153,11 @@
                 </LinearLayout>
                 <View android:id="@+id/translationDivider"
                     android:layout_width="1dp"
-                    android:layout_height="fill_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="0.00001"
                     android:background="@color/ripple_material_dark" />
                 <LinearLayout android:id="@+id/fontSizeToggles"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:gravity="center_vertical|center_horizontal"
@@ -191,7 +189,7 @@
             </LinearLayout>
         </LinearLayout>
         <TextView android:id="@+id/dpoBottom"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/display_options_gurbani"
             android:textColor="@color/gurbani_basanti"
@@ -200,5 +198,4 @@
             android:gravity="center_vertical|center_horizontal">
         </TextView>
     </LinearLayout>
-
 </RelativeLayout>

@@ -1,9 +1,26 @@
-<resources>
-    <style name="Theme_Dark" parent="Base.Theme.AppCompat">
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="MaterialDark" parent="Base.V21.Theme.AppCompat">
+        <!-- Main theme colors -->
+        <!--   your app branding color for the app bar -->
+        <item name="colorPrimary">@color/primary_material_dark</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/accent_material_dark</item>
     </style>
 
-    <style name="Theme_Dark_v2" parent="Base.V21.Theme.AppCompat">
+    <style name="MaterialLight" parent="Base.Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/primary_material_light</item>
+        <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
+        <item name="colorAccent">@color/accent_material_light</item>
+    </style>
 
+    <style name="AppCompatDark" parent="Base.Theme.AppCompat">
+        <item name="colorPrimary">@color/primary_material_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
+        <item name="colorAccent">@color/accent_material_dark</item>
     </style>
 
     <color name="gurbani_basanti">#ffffc200</color>

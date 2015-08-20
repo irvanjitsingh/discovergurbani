@@ -5,7 +5,7 @@
     android:configChanges="orientation|screenSize"
     tools:context=".SearchActivity">
     <LinearLayout android:id="@+id/spinner_labels"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="0.9"
         android:paddingLeft="10dp"
@@ -13,21 +13,21 @@
         android:paddingTop="3dp"
         android:paddingBottom="3.5dp">
         <TextView android:id="@+id/searchmode_label"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:text="@string/searchModeLabel"
             android:textSize="12sp"
             android:gravity="center" />
         <TextView android:id="@+id/transliteration_label"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:textSize="12sp"
             android:text="@string/transliterationLabel"
             android:gravity="center" />
         <TextView android:id="@+id/translation_label"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:textSize="12sp"
@@ -35,22 +35,22 @@
             android:gravity="center" />
     </LinearLayout>
     <LinearLayout android:id="@+id/spinners"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="0.9"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp">
         <Spinner android:id="@+id/searchmode_spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"/>
         <Spinner android:id="@+id/transliteration_spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"/>
         <Spinner android:id="@+id/translation_spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"/>
     </LinearLayout>
@@ -64,7 +64,7 @@
         android:paddingBottom="5dp" />
     <ListView
         android:id="@+id/search_results"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/result"/>
 </RelativeLayout>

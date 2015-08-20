@@ -12,7 +12,7 @@
 
     <string name="menu_label_settings">Settings</string>
     <string name="menu_label_reset">Reset Display</string>
-    <string name="menu_label_display_options">Display Settings</string>
+    <string name="menu_label_display_options">Display</string>
     <string name="menu_label_previous_button">Prev</string>
     <string name="menu_label_next_button">Next</string>
     <string name="menu_label_laridaar">Laridaar</string>
@@ -20,8 +20,15 @@
     <string name="menu_label_audio_stop">Stop</string>
     <string name="menu_label_audio_pause">Pause</string>
 
+    <string name="pref_category_display">Display</string>
+    <string name="pref_category_network">Network</string>
+    <string name="pref_category_search">Search</string>
     <string name="pref_wake_display">Keep Display On</string>
-    <string name="pref_wake_display_summ">Prevents the display from falling asleep while reading Gurbani</string>
+    <string name="pref_wake_display_summ">Prevent the display from falling asleep while reading Gurbani</string>
+    <string name="pref_auto_search">Auto Search</string>
+    <string name="pref_auto_search_summ">Start searching as you type (this might use more data)</string>
+    <string name="pref_wifi_only">Wifi Only</string>
+    <string name="pref_wifi_only_summ">Only use a Wi-Fi connection to load shabads</string>
 
     <string name="gurmukhiToggleLabel">ਅ</string>
     <string name="translationToggleLabel">A</string>
@@ -30,7 +37,7 @@
     <string name="increaseFontSizeLabel">+</string>
     <string name="decreaseFontSizeLabel">-</string>
 
-    <string name="angNumberLabel">Ang Number</string>
+    <string name="angNumberLabel">Ang (optional)</string>
     <string name="searchModeLabel">Search Mode</string>
     <string name="transliterationLabel">Transliteration</string>
     <string name="translationLabel">Translation</string>
@@ -53,17 +60,17 @@
     <string name="title_section4">Discover</string>
 
     <string name="about_page_text">
-        ਵਾਹਿਗੁਰੂਜੀਕਾਖ਼ਾਲਸਾ।ਵਾਹਿਗੁਰੂਜੀਕੀਫ਼ਤਹਿ।\n\nVaheguru Jee Ka Khalsa, Vaheguru Jee Kee Fateh!\n\nDiscover Gurbani is a search engine for the Sikh Scriptures, Siri Guru Granth Sahib Jee. They contain the writings of the Gurus as well as several other enlightened Saints of different faiths and backgrounds. Sikhs regard Siri Guru Granth Sahib Ji as their eternal Guru and the living embodiment of the Gurus\’ very spirit and soul.\n\nThe writings, known as Gurbani (pronounced gurbaanee), are central to the Sikh faith as they embody the message of the Gurus and were compiled and sealed by the Guru themselves. Gurbani is unique in that all of it is poetry; the hymns are assigned rhythms and musical scales, as they are meant to be sung.\n\nWith the Guru\’s blessing, this app aims to allow anyone, regardless of their background or belief, to discover and experience the Guru\’s wisdom. The user can read Gurbani in their native tongue through various transliterations and attempt to understand what they\’ve read through translations of the same language.\n\n***No translation of Gurbani can ever be considered complete, as we are flawed by interpretation. Furthermore, as with the translation attempt of any poem, the poetry is lost. Therefore, anyone wishing to understand Gurbani should aim to learn the Gurmukhi script. However, languages and scripts can often become barriers and this is an attempt to ease the learning process for those new to Gurbani and Gurmukhi.    <!--<string name="about_page_text_1">-->
+        ਗੁਰਬਾਣੀ ਇਸੁ ਜਗ ਮਹਿ ਚਾਨਣੁ ਕਰਮਿ ਵਸੈ ਮਨਿ ਆਏ ॥੧॥\n\nGurbani is the light to illuminate this world; By the grace of the King of Kings, it comes to abide within the mind. ||1|| - Guru Amar Das Ji\n\nDiscover Gurbani is a search engine for the Sikh Scriptures, Guru Granth Sahib Ji. They contain the writings of the Sikh Gurus, as well as other enlightened Saints of different faiths and backgrounds. The Gurus gave these writings supreme status in Sikhi and Sikhs now regard Guru Granth Sahib Ji as the eternal, living Guru - the words aren’t just words but are the living embodiment of the Gurus very spirit and soul.\n\nThe writings, collectively referred to as Gurbani, contain the Gurus wisdom and were compiled and sealed by the Guru themselves. Gurbani is very unique among the various scriptures of the world. It isn’t just a description of the path to enlightenment, but it is the path in itself. One example is everything is written in poetic measure and assigned various musical scales and rhythms - it is not just meant to be read, but sung.\n\nWith the Guru’s blessing, this app aims to allow anyone, regardless of their background or belief, to discover and experience the Guru’s wisdom. The user can read Gurbani in their native language’s script through transliterations, listen to the recitation, and understand what they’re read with translations of the same language.\n\n**No translation of Gurbani can ever be complete as we are flawed by interpretation, and oftentimes limited by the constraints of scripts, alphabets and languages. With translations, poetic measure is usually also lost. Therefore, anyone wishing to understand Gurbani should aim to eventually learn the Gurmukhi script and correct pronunciation. However, languages can sometimes become barriers; this is an attempt to ease the learning process for those new to Gurbani.\n\n***Dhan Siri Guru Granth Sahib Ji maharaj is Jagat Guru, meaning they are accessible to everyone, not just Punjabi-speaking Sikhs; people of all walks of life can take the wisdom in these shabads and apply it to their lives. Guru Sahib tells us themselves: Gurbani is the light for entire  world to behold. In our history, great Gursukhs like Baba Deep Singh Ji used to have translations of Maharaj’s saroop prepared and sent to different parts of the world, for the masses to be able to receive the Guru’s wisdom. However today, Gurbani isn’t very accessible to much of the world’s population that isn’t fluent in Punjabi or English. We should strive to learn Gurmukhi and shud uchaaran of Gurbani to fully experience the gurshabad, but it shouldn’t be a barrier for anyone to discover the beauty of Gurbani.
     </string>
 
     <string name="read_page_text">
-        When Siri Guru Granth Sahib Ji is read from start to finish, but at one’s own pace, it is referred to as a Sehaj Paath. Try reading!
+        When Siri Guru Granth Sahib Ji is read from start to finish, but at one’s own pace, it is referred to as a Sehaj Paath. Pick a script and language, play the audio, and try reading!
     </string>
 
     <string name="read_edit_text">(1&#8211;1430)</string>
 
     <string name="search_page_text">
-        One of the many amazing qualities of Siri Guru Granth Sahib Ji is that they contain a brilliant but subtle indexing system.\n\nOne can search the Gurbani by using the first *letter* of each *word* in a *sentence*. In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less. Give it a try!\n\n**NOTE: Searching by Gurmukhi characters currently requires a Gurmukhi Keyboard (can be found on Play Store).
+        One of the many amazing qualities of Siri Guru Granth Sahib Ji is that they contain a brilliant but subtle indexing system.\n\nOne can search the Gurbani by using the first *letter* of each *word* in a *sentence* (search by 1st letter, Start). In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less. Give it a try!
     </string>
 
     <string name="hukam_page_text">
@@ -78,5 +85,9 @@
     <string name="read_button_text">Read</string>
     <string name="search_button_text">Search</string>
     <string name="hukam_button_text">Take a Hukamnama</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

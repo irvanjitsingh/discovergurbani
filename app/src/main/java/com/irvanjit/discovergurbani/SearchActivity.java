@@ -4,11 +4,14 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.JsonReader;
@@ -32,13 +35,13 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-
+import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -46,61 +49,53 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
 
     private SearchView searchView;
     private TextView resultMessage;
-    private Toast toast;
     private ProgressDialog loading;
 
-    private ListView shabadsListView;
     private ArrayList<HashMap<String, String>> shabadList;
     private ArrayList<String> shabadIdList;
     private ArrayList<Integer> pangtiIdList;
     private String[] shabadListKeys;
     private int[] shabadListValues;
+    private boolean autoSearchEnabled;
+    private boolean isAutoSearch;
+
     private String query;
+    private String translationId;
+    private String transliterationId;
+
+    private ListView shabadsListView;
+    private SharedPreferences preferences;
+
 
     //default settings
-    private String translationId = "13";
-    private String transliterationId = "69";
     private int searchMode = 0;
-    private int searchTranslation = 3;
-    private int searchTransliteration = 4;
-    private int searchAng = 5;
-    private static final String apiBase = "http://api.sikher.com";
+    private final int searchTranslation = 3;
+    private final int searchTransliteration = 4;
+    private final int searchAng = 5;
 
-    //JSON Nodes
-    private static String TAG_PANGTI_ID = "id";
-    private static String TAG_PANGTI = "text";
-    private static String TAG_SHABAD = "hymn";
-    private static String TAG_ANG = "page";
-    private static String TAG_SECTION = "section";
-    private static String TAG_RAAG = "melody";
-    private static String TAG_AUTHOR = "author";
-    private static String TAG_TRANSLATION = "translation";
-    private static String TAG_TRANSLITERATION = "transliteration";
-    private static String TAG_META = "meta";
-    private static String TAG_SCRIPTURE = "scripture";
+    private HashMap<Character, Character> charMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //search page setup
         query = "";
         resultMessage = (TextView) findViewById(R.id.result);
+        charMap = new GurmukhiCharMap(2).getMapping();
 
         //Setup Shabad Results list
         setupShabadsListView();
 
-        //setup error toast
-        Context context = getApplicationContext();
-        CharSequence connError = "Not connected";
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, connError, duration);
+        //load preferences
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        autoSearchEnabled = preferences.getBoolean(SettingsActivity.KEY_PREF_ENABLE_AUTO_SEARCH, false);
 
-        //misc. setup
+
         loading = new ProgressDialog(SearchActivity.this);
         setupSpinners();
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -111,6 +106,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onResume() {
         super.onResume();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        autoSearchEnabled = preferences.getBoolean(SettingsActivity.KEY_PREF_ENABLE_AUTO_SEARCH, false);
     }
 
     @Override
@@ -125,18 +122,17 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-//        if (id == R.id.action_settings) {
-//            Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-//            startActivity(settingsIntent);
-//            return true;
-//        }
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-//        boolean queryExists = query.getText().length() > 0;
-        boolean queryExists = query.length() > 0;
+        boolean queryExists = !query.isEmpty();
         if (parent.getId() == R.id.transliteration_spinner) {
             String scriptName = "script_" + parent.getItemAtPosition(pos).toString();
             int strId = getResources().getIdentifier(scriptName, "string", getPackageName());
@@ -184,59 +180,96 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private SearchView.OnQueryTextListener searchQueryListener = new SearchView.OnQueryTextListener() {
+        boolean queryReplaced;
+
         @Override
         public boolean onQueryTextChange(String newText) {
-            query = searchView.getQuery().toString();
+            if (searchMode != searchAng) {
+                if (autoSearchEnabled) {
+                    shabadList.clear();
+                    resultMessage.setText("");
+                    shabadsListView.requestFocus();
+                    searchView.requestFocus();
+                }
+
+                query = searchView.getQuery().toString();
+
+                if (autoSearchEnabled && query.length() > 2) {
+                    resultMessage.setText("searching...");
+                }
+                //            int c = query.codePointAt(0);
+                //            boolean queryIsGurmukhi = (c >= 0x0A00 && c <= 0x0A60);
+                //            boolean queryIsLatin = query.charAt(0) < 128;
+
+                isAutoSearch = true;
+                StringBuilder gurmukhi = new StringBuilder(query);
+
+                for (int i = 0; i < query.length(); i++) {
+                    // Replace if a gurmukhi substitution is available
+                    Character replacement = charMap.get(query.charAt(i));
+                    if (replacement != null) {
+                        queryReplaced = true;
+                        gurmukhi.setCharAt(i, replacement);
+                    }
+                }
+                if (queryReplaced) {
+                    queryReplaced = false;
+                    searchView.setQuery(gurmukhi, false);
+                } else if (autoSearchEnabled && (query.length() > 2)) {
+                    searchForShabad(query);
+                }
+            }
             return true;
         }
 
         @Override
         public boolean onQueryTextSubmit(String query) {
-            searchForShabad(query);
+            isAutoSearch = false;
+            hideKeyboard();
+
+            if ((!(autoSearchEnabled && query.length() > 2))||(searchMode == searchAng)) {
+                searchForShabad(query);
+            } else {
+                shabadsListView.requestFocus();
+            }
             return true;
         }
     };
 
-    void setupSpinner(Spinner spinner, ArrayAdapter<CharSequence> spinnerAdapter, int defaultValue) {
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-        spinner.setSelection(defaultValue);
-        spinner.setOnItemSelectedListener(this);
+    public void setupSpinners() {
+        Spinner translationSpinner = new AwesomeSpinner(this, getWindow().getDecorView(),
+                R.id.translation_spinner, R.array.translation_strings, 0).getAwesomeSpinner();
+        Spinner transliterationSpinner = new AwesomeSpinner(this, getWindow().getDecorView(),
+                R.id.transliteration_spinner, R.array.transliteration_strings, 1).getAwesomeSpinner();
+        Spinner searchModeSpinner = new AwesomeSpinner(this, getWindow().getDecorView(),
+                R.id.searchmode_spinner, R.array.search_modes, 2).getAwesomeSpinner();
+        translationSpinner.setOnItemSelectedListener(this);
+        transliterationSpinner.setOnItemSelectedListener(this);
+        searchModeSpinner.setOnItemSelectedListener(this);
     }
 
-    void setupSpinners() {
-        //SPINNERS
-        Spinner translationSpinner = (Spinner) findViewById(R.id.translation_spinner);
-        Spinner transliterationSpinner = (Spinner) findViewById(R.id.transliteration_spinner);
-        Spinner searchModeSpinner = (Spinner) findViewById(R.id.searchmode_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> translationAdapter = ArrayAdapter.createFromResource(this,
-                R.array.translation_strings, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> transliterationAdapter = ArrayAdapter.createFromResource(this,
-                R.array.transliteration_strings, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> searchModeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.search_modes, android.R.layout.simple_spinner_item);
-        setupSpinner(translationSpinner, translationAdapter, 12);
-        setupSpinner(transliterationSpinner, transliterationAdapter, 14);
-        setupSpinner(searchModeSpinner, searchModeAdapter, searchMode);
-    }
-
-    void setupLoadingDialog(ProgressDialog loading) {
+    public void setupLoadingDialog(ProgressDialog loading) {
             loading.setMessage("Searching");
             loading.setCancelable(true);
             loading.setCanceledOnTouchOutside(false);
             loading.setIndeterminate(false);
     }
 
-    void setupShabadsListView() {
+    public void setupShabadsListView() {
         shabadList = new ArrayList<HashMap<String, String>>();
-        shabadIdList = new ArrayList<>();
-        pangtiIdList = new ArrayList<>();
+        shabadIdList = new ArrayList<String>();
+        pangtiIdList = new ArrayList<Integer>();
 
         shabadsListView = (ListView) findViewById(R.id.search_results);
         shabadsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (isAutoSearch && autoSearchEnabled) {
+                    shabadsListView.requestFocus();
+                    hideKeyboard();
+                }
+
                 // Get shabad metadata
                 String shabadId = shabadIdList.get(position);
                 int pangtiId = pangtiIdList.get(position);
@@ -244,19 +277,19 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 // Start shabad activity
                 Intent in = new Intent(getApplicationContext(),
                         ShabadActivity.class);
-                in.putExtra(TAG_SHABAD, shabadId);
-                in.putExtra(TAG_PANGTI_ID, pangtiId);
-                in.putExtra(TAG_TRANSLATION, translationId);
-                in.putExtra(TAG_TRANSLITERATION, transliterationId);
+                in.putExtra(ShabadActivity.TAG_SHABAD, shabadId);
+                in.putExtra(ShabadActivity.TAG_PANGTI_ID, pangtiId);
+                in.putExtra(ShabadActivity.TAG_TRANSLATION, translationId);
+                in.putExtra(ShabadActivity.TAG_TRANSLITERATION, transliterationId);
                 in.putExtra("displayMode", 0);
                 startActivity(in);
             }
         });
     }
 
-    void setupShabadListAdapter() {
-        shabadListKeys = new String[] {TAG_PANGTI, TAG_TRANSLATION, TAG_TRANSLITERATION, TAG_META};
-        shabadListValues = new int[] { R.id.pangti, R.id.translation, R.id.transliteration, R.id.meta};
+    public void setupShabadListAdapter() {
+        shabadListKeys = new String[] {ShabadActivity.TAG_PANGTI, ShabadActivity.TAG_TRANSLATION, ShabadActivity.TAG_TRANSLITERATION, ShabadActivity.TAG_META};
+        shabadListValues = new int[] {R.id.pangti, R.id.translation, R.id.transliteration, R.id.meta};
 
         ListAdapter shabadListAdapter = new ShabadListAdapter(
                 SearchActivity.this, shabadList, R.layout.search_item, shabadListKeys, shabadListValues);
@@ -284,11 +317,11 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             TextView transliteration = (TextView) v.findViewById(R.id.transliteration);
             TextView meta = (TextView) v.findViewById(R.id.meta);
 
-            pangti.setText(results.get(position).get(TAG_PANGTI));
+            pangti.setText(results.get(position).get(ShabadActivity.TAG_PANGTI));
             pangti.setTypeface(anmolBani);
-            translation.setText(results.get(position).get(TAG_TRANSLATION));
-            transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
-            meta.setText(results.get(position).get(TAG_META));
+            translation.setText(results.get(position).get(ShabadActivity.TAG_TRANSLATION));
+            transliteration.setText(results.get(position).get(ShabadActivity.TAG_TRANSLITERATION));
+            meta.setText(results.get(position).get(ShabadActivity.TAG_META));
             return v;
         }
     }
@@ -297,7 +330,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         if (isConnected()) {
             new SearchShabadTask().execute(query);
         } else {
-            toast.show();
+            Toast.makeText(this, "Not connected to network", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -306,9 +339,10 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         protected void onPreExecute() {
             super.onPreExecute();
             shabadList.clear();
-            hideKeyboard();
-            setupLoadingDialog(loading);
-            loading.show();
+            if (!isAutoSearch) {
+                setupLoadingDialog(loading);
+                loading.show();
+            }
         }
 
         @Override
@@ -323,8 +357,11 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         protected void onPostExecute(String result) {
             resultMessage.setText(result);
             setupShabadListAdapter();
-            loading.dismiss();
-            shabadsListView.requestFocus();
+            if (!isAutoSearch) {
+                loading.dismiss();
+                shabadsListView.requestFocus();
+                resultMessage.setText("");
+            }
         }
     }
 
@@ -336,7 +373,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             if (searchMode == searchAng) {
                 searchModeString = "page";
             }
-            urlString = apiBase+"/"+searchModeString+"/"+query+"/"+translationId+"/"+transliterationId;
+            urlString = ShabadActivity.URL_API_BASE+"/"+searchModeString+"/"+query+"/"+translationId+"/"+transliterationId;
         } catch (IOException e) {
             Log.d(DEBUG_TAG, e.toString());
             return null;
@@ -368,7 +405,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     // Reads an InputStream and converts it to a String.
-    public String parseQueryJson(InputStream in) throws IOException, UnsupportedEncodingException {
+    public String parseQueryJson(InputStream in) throws IOException {
         shabadIdList.clear();
         pangtiIdList.clear();
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
@@ -388,9 +425,9 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 HashMap<String, String> shabad = new HashMap<String, String>();
                 while (reader.hasNext()) {
                     String name = reader.nextName();
-                    if (name.equals(TAG_PANGTI_ID)) {
+                    if (name.equals(ShabadActivity.TAG_PANGTI_ID)) {
                         pangti_id = reader.nextInt();
-                    } else if (name.equals(TAG_PANGTI)) {
+                    } else if (name.equals(ShabadActivity.TAG_PANGTI)) {
                         if (searchMode == searchTranslation) {
                             translation = reader.nextString();
                         } else if (searchMode == searchTransliteration) {
@@ -398,53 +435,53 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                         } else {
                             pangti = reader.nextString();
                         }
-                    } else if (name.equals(TAG_SHABAD)) {
+                    } else if (name.equals(ShabadActivity.TAG_SHABAD)) {
                         shabad_id = reader.nextInt();
-                    } else if (name.equals(TAG_ANG)) {
+                    } else if (name.equals(ShabadActivity.TAG_ANG)) {
                         ang = reader.nextInt();
-                    } else if (name.equals(TAG_SECTION)) {
+                    } else if (name.equals(ShabadActivity.TAG_SECTION)) {
                         section = reader.nextString();
-                    } else if (name.equals(TAG_TRANSLATION)) {
+                    } else if (name.equals(ShabadActivity.TAG_TRANSLATION)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
                             String subName = reader.nextName();
-                            if (subName.equals(TAG_PANGTI)) {
+                            if (subName.equals(ShabadActivity.TAG_PANGTI)) {
                                 translation = reader.nextString();
                             } else {
                                 reader.skipValue();
                             }
                         }
                         reader.endObject();
-                    } else if (name.equals(TAG_TRANSLITERATION)) {
+                    } else if (name.equals(ShabadActivity.TAG_TRANSLITERATION)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
                             String subName = reader.nextName();
-                            if (subName.equals(TAG_PANGTI)) {
+                            if (subName.equals(ShabadActivity.TAG_PANGTI)) {
                                 transliteration = reader.nextString();
                             } else {
                                 reader.skipValue();
                             }
                         }
                         reader.endObject();
-                    } else if (name.equals(TAG_SCRIPTURE)) {
+                    } else if (name.equals(ShabadActivity.TAG_SCRIPTURE)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
                             String subName = reader.nextName();
-                            if (subName.equals(TAG_PANGTI_ID)) {
+                            if (subName.equals(ShabadActivity.TAG_PANGTI_ID)) {
                                 pangti_id = reader.nextInt();
-                            } else if (subName.equals(TAG_PANGTI)) {
+                            } else if (subName.equals(ShabadActivity.TAG_PANGTI)) {
                                 pangti = reader.nextString();
-                            } else if (subName.equals(TAG_SHABAD)) {
+                            } else if (subName.equals(ShabadActivity.TAG_SHABAD)) {
                                 shabad_id = reader.nextInt();
-                            } else if (subName.equals(TAG_ANG)) {
+                            } else if (subName.equals(ShabadActivity.TAG_ANG)) {
                                 ang = reader.nextInt();
-                            } else if (subName.equals(TAG_SECTION)) {
+                            } else if (subName.equals(ShabadActivity.TAG_SECTION)) {
                                 section = reader.nextString();
-                            } else if (subName.equals(TAG_AUTHOR)) {
+                            } else if (subName.equals(ShabadActivity.TAG_AUTHOR)) {
                                 reader.beginObject();
                                 while (reader.hasNext()) {
                                     String secondSubName = reader.nextName();
-                                    if (secondSubName.equals(TAG_AUTHOR)) {
+                                    if (secondSubName.equals(ShabadActivity.TAG_AUTHOR)) {
                                         author = reader.nextString();
                                     } else {
                                         reader.skipValue();
@@ -456,11 +493,11 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                             }
                         }
                         reader.endObject();
-                    } else if (name.equals(TAG_AUTHOR)) {
+                    } else if (name.equals(ShabadActivity.TAG_AUTHOR)) {
                         reader.beginObject();
                         while (reader.hasNext()) {
                             String subName = reader.nextName();
-                            if (subName.equals(TAG_AUTHOR)) {
+                            if (subName.equals(ShabadActivity.TAG_AUTHOR)) {
                                 author = reader.nextString();
                             } else {
                                 reader.skipValue();
@@ -471,18 +508,16 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                         reader.skipValue();
                     }
                 }
-                shabadIdList.add(String.valueOf(shabad_id));
-                pangtiIdList.add(pangti_id);
-                shabad.put(TAG_PANGTI, pangti);
-                shabad.put(TAG_TRANSLATION, translation);
-                shabad.put(TAG_TRANSLITERATION, transliteration);
-                if (author.equals("None")) {
-                    meta = "Ang "+String.valueOf(ang)+ " | "+section;
-                } else {
+                if (!author.equals("None")) {
+                    shabadIdList.add(String.valueOf(shabad_id));
+                    pangtiIdList.add(pangti_id);
+                    shabad.put(ShabadActivity.TAG_PANGTI, pangti);
+                    shabad.put(ShabadActivity.TAG_TRANSLATION, translation);
+                    shabad.put(ShabadActivity.TAG_TRANSLITERATION, transliteration);
                     meta = author+" Ji | Ang "+String.valueOf(ang)+ " | "+section;
+                    shabad.put(ShabadActivity.TAG_META, meta);
+                    shabadList.add(shabad);
                 }
-                shabad.put(TAG_META, meta);
-                shabadList.add(shabad);
                 reader.endObject();
             }
             reader.endArray();
@@ -499,7 +534,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     public void hideKeyboard() {
-        if(getCurrentFocus()!=null) {
+        if(getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }

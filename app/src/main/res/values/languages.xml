@@ -30,8 +30,8 @@
     <string name="lang_Belarusian">4</string>
     <string name="lang_Bulgarian">5</string>
     <string name="lang_Catalan">6</string>
-    <string name="lang_ChineseSimplified">7</string>
-    <string name="lang_ChineseTraditional">8</string>
+    <string name="lang_Chinese_Simplified">7</string>
+    <string name="lang_Chinese_Traditional">8</string>
     <string name="lang_Croatian">9</string>
     <string name="lang_Czech">10</string>
     <string name="lang_Danish">11</string>
@@ -44,7 +44,7 @@
     <string name="lang_Galician">18</string>
     <string name="lang_German">19</string>
     <string name="lang_Greek">20</string>
-    <string name="lang_HaitianCreole">21</string>
+    <string name="lang_Haitian_Creole">21</string>
     <string name="lang_Hebrew">22</string>
     <string name="lang_Hindi">23</string>
     <string name="lang_Hungarian">24</string>
@@ -95,11 +95,11 @@
         <item name="68">Katakana</item>
         <item name="69">Latin</item>
         <item name="70">Malayalam</item>
-        <!--<item name="71">Oryia</item>-->
-        <!--<item name="72">Syriac</item>-->
+        <item name="71">Oryia</item>
+        <item name="72">Syriac</item>
         <item name="73">Tamil</item>
         <item name="74">Telugu</item>
-        <!--<item name="75">Thaana</item>-->
+        <item name="75">Thaana</item>
         <item name="76">Thai</item>
     </string-array>
 
@@ -110,8 +110,8 @@
         <item name="4">Belarusian</item>
         <item name="5">Bulgarian</item>
         <item name="6">Catalan</item>
-        <item name="7">ChineseSimplified</item>
-        <item name="8">ChineseTraditional</item>
+        <item name="7">Chinese Simplified</item>
+        <item name="8">Chinese Traditional</item>
         <item name="9">Croatian</item>
         <item name="10">Czech</item>
         <item name="11">Danish</item>
@@ -124,7 +124,7 @@
         <item name="18">Galician</item>
         <item name="19">German</item>
         <item name="20">Greek</item>
-        <item name="21">HaitianCreole</item>
+        <item name="21">Haitian Creole</item>
         <item name="22">Hebrew</item>
         <item name="23">Hindi</item>
         <item name="24">Hungarian</item>

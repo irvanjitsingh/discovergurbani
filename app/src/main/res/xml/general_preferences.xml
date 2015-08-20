@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-        android:key="pref_display_wake"
-        android:title="@string/pref_wake_display"
-        android:summary="@string/pref_wake_display_summ"
-        android:defaultValue="true" />
+    <PreferenceCategory
+        android:title="@string/pref_category_display"
+        android:key="pref_key_display_settings">
+        <CheckBoxPreference
+            android:key="pref_display_wake"
+            android:title="@string/pref_wake_display"
+            android:summary="@string/pref_wake_display_summ"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_category_search"
+        android:key="pref_key_search_settings">
+        <CheckBoxPreference
+            android:key="pref_auto_search"
+            android:title="@string/pref_auto_search"
+            android:summary="@string/pref_auto_search_summ"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <!--<PreferenceCategory-->
+        <!--android:title="@string/pref_category_network"-->
+        <!--android:key="pref_key_network_settings">-->
+        <!--<CheckBoxPreference-->
+            <!--android:key="pref_wifi_only"-->
+            <!--android:title="@string/pref_wifi_only"-->
+            <!--android:summary="@string/pref_wifi_only_summ"-->
+            <!--android:defaultValue="false" />-->
+    <!--</PreferenceCategory>-->
 </PreferenceScreen>

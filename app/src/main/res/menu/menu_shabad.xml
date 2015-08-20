@@ -2,23 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.irvanjit.discovergurbani.ShabadActivity">
-
-    <item
-        android:id="@+id/action_previous_button"
-        app:showAsAction="always"
-        android:title="@string/menu_label_previous_button" />
     <item
         android:id="@+id/action_laridaar"
         app:showAsAction="always"
         android:title="@string/menu_label_laridaar" />
     <item
+        android:id="@+id/action_previous_button"
+        app:showAsAction="always"
+        android:title="@string/menu_label_previous_button" />
+    <item
         android:id="@+id/action_next_button"
         app:showAsAction="always"
         android:title="@string/menu_label_next_button" />
-    <item
-        android:id="@+id/action_settings"
-        app:showAsAction="never"
-        android:title="@string/menu_label_settings" />
     <item
         android:id="@+id/action_audio_start"
         app:showAsAction="never"
@@ -31,6 +26,10 @@
         android:id="@+id/action_audio_stop"
         app:showAsAction="never"
         android:title="@string/menu_label_audio_stop" />
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:title="@string/menu_label_settings" />
     <item
         android:id="@+id/action_reset"
         app:showAsAction="never"

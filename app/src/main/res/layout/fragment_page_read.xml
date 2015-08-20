@@ -7,11 +7,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout android:id="@+id/spinner_labels"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="0.9"
@@ -20,21 +20,21 @@
                 android:paddingTop="15dp"
                 android:paddingBottom="2dp">
                 <TextView android:id="@+id/angLabel"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
                     android:text="@string/angNumberLabel"
                     android:textSize="12sp"
                     android:gravity="center" />
                 <TextView android:id="@+id/transliteration_label"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
                     android:textSize="12sp"
                     android:text="@string/transliterationLabel"
                     android:gravity="center" />
                 <TextView android:id="@+id/translation_label"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
                     android:textSize="12sp"
@@ -42,7 +42,7 @@
                     android:gravity="center" />
             </LinearLayout>
             <LinearLayout android:id="@+id/spinners"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="0.9"
                 android:orientation="horizontal"
@@ -51,18 +51,18 @@
                 android:paddingBottom="10dp"
                 android:gravity="center_vertical|center_horizontal">
                 <EditText android:id="@+id/ang_number"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
                     android:hint="@string/read_edit_text"
                     android:inputType="number"
                     android:gravity="center_horizontal" />
                 <Spinner android:id="@+id/transliteration_spinner"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"/>
                 <Spinner android:id="@+id/translation_spinner"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"/>
             </LinearLayout>

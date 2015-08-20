@@ -1,5 +1,6 @@
 package com.irvanjit.discovergurbani;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,11 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.Equalizer;
+import android.media.audiofx.NoiseSuppressor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.PowerManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Switch;
+import android.support.v7.widget.SwitchCompat;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,13 +45,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class ShabadActivity extends AppCompatActivity {
-    private static final String DEBUG_TAG = "HttpDebug";
-    private static final String KEY_PREF_DISPLAY_WAKE = "pref_display_wake";
 
-    private static final String apiBase = "http://api.sikher.com";
-    private static final String audioBase = "http://media.sikher.com/audio";
     private TextView errorMessage;
     private TextView pangti;
     private TextView laridaar;
@@ -66,13 +62,11 @@ public class ShabadActivity extends AppCompatActivity {
     private String angString;
     private String raagString;
     private String authorString;
-    private String audioUrl;
     private ArrayList<HashMap<String, String>> shabadList;
     private ProgressDialog loading;
     private LinearLayout displayOptionsView;
     private ListAdapter shabadDisplayAdapter;
     private MediaPlayer shabadAudio;
-    private WifiManager.WifiLock wifiLock;
     private Toast errorToast;
     private View mDecorView;
     private boolean displayWakeMode;
@@ -80,12 +74,10 @@ public class ShabadActivity extends AppCompatActivity {
     private boolean highlightPangti;
     private boolean firstLoad = true;
     private boolean shabadError;
+    private boolean noiseSuppressed;
     private int targetPangti;
     private int pangtiPosition;
     private int displayMode;
-    private int displayModeShabad = 0;
-    private int displayModeAng = 1;
-    private int displayModeHukamnama = 2;
     private int actionBarHeight = 10;
 
     private int pangtiFontSize;
@@ -98,29 +90,42 @@ public class ShabadActivity extends AppCompatActivity {
     private int translationVisibility;
     private int transliterationVisibility;
 
+    private final int displayModeShabad = 0;
+    private final int displayModeAng = 1;
+    private final int displayModeHukamnama = 2;
+
     private final int defaultPangtiFontSize = 22;
     private final int defaultTransliterationFontSize = 16;
     private final int defaultTranslationFontSize = 14;
 
     private final int defaultPangtiVisibility = View.VISIBLE;
     private final int defaultLaridaarVisibility = View.GONE;
-    private final int defaultTranslationVisibility = View.VISIBLE;;
-    private final int defaultTransliterationVisibility = View.VISIBLE;;
-    private final boolean defaultLaridaarEnabled = false;;
+    private final int defaultTranslationVisibility = View.VISIBLE;
+    private final int defaultTransliterationVisibility = View.VISIBLE;
+    private final boolean defaultLaridaarEnabled = false;
 
+    public static final String DEFAULT_TRANSLATION_ID = "13";
+    public static final String DEFAULT_TRANSLITERATION_ID = "69";
 
-    public static final String PREFS_NAME = "DisplayPreferences";
+    public SharedPreferences preferences;
+
+    public static final String DEBUG_TAG = "HttpDebug";
+
+    public static final String URL_API_BASE = "http://api.sikher.com";
+    public static final String URL_AUDIO_BASE = "http://media.sikher.com/audio";
 
     //JSON Nodes
-    private static final String TAG_PANGTI_ID = "id";
-    private static final String TAG_PANGTI = "text";
-    private static final String TAG_LARIDAAR = "original";
-    private static final String TAG_SHABAD = "hymn";
-    private static final String TAG_TRANSLATION = "translation";
-    private static final String TAG_TRANSLITERATION = "transliteration";
-    private static final String TAG_ANG = "page";
-    private static final String TAG_AUTHOR = "author";
-    private static final String TAG_SECTION = "section";
+    public static final String TAG_PANGTI_ID = "id";
+    public static final String TAG_PANGTI = "text";
+    public static final String TAG_LARIDAAR = "original";
+    public static final String TAG_SHABAD = "hymn";
+    public static final String TAG_ANG = "page";
+    public static final String TAG_SECTION = "section";
+    public static final String TAG_AUTHOR = "author";
+    public static final String TAG_TRANSLATION = "translation";
+    public static final String TAG_TRANSLITERATION = "transliteration";
+    public static final String TAG_SCRIPTURE = "scripture";
+    public static final String TAG_META = "meta";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,13 +133,12 @@ public class ShabadActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         setContentView(R.layout.activity_shabad);
 
         //get shabad info
         Intent intent = getIntent();
         shabadId = intent.getStringExtra(TAG_SHABAD);
-        targetPangti = intent.getIntExtra("id", targetPangti);
+        targetPangti = intent.getIntExtra(TAG_PANGTI_ID, targetPangti);
         translationId = intent.getStringExtra(TAG_TRANSLATION);
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
         displayMode = intent.getIntExtra("displayMode", displayMode);
@@ -148,31 +152,36 @@ public class ShabadActivity extends AppCompatActivity {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
 
-        //setup general preferences
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        displayWakeMode = sharedPref.getBoolean(SettingsActivity.KEY_PREF_DISPLAY_WAKE, false);
+        //load preferences
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        //load aesthetics
+        pangtiFontSize = preferences.getInt(SettingsActivity.KEY_PREF_FONT_SIZE_GURMUKHI, defaultPangtiFontSize);
+        laridaarFontSize = pangtiFontSize;
+        transliterationFontSize = preferences.getInt(SettingsActivity.KEY_PREF_FONT_SIZE_TRANSLITERATION, defaultTransliterationFontSize);
+        translationFontSize = preferences.getInt(SettingsActivity.KEY_PREF_FONT_SIZE_TRANSLATION, defaultTranslationFontSize);
+        pangtiVisibility = preferences.getInt(SettingsActivity.KEY_PREF_VISIBILITY_GURMUKHI, defaultPangtiVisibility);
+        laridaarVisibility = preferences.getInt(SettingsActivity.KEY_PREF_VISIBILITY_LARIDAAR, defaultLaridaarVisibility);
+        transliterationVisibility = preferences.getInt(SettingsActivity.KEY_PREF_VISIBILITY_TRANSLITERATION, defaultTransliterationVisibility);
+        translationVisibility = preferences.getInt(SettingsActivity.KEY_PREF_VISIBILITY_TRANSLATION, defaultTranslationVisibility);
+        laridaarMode = preferences.getBoolean(SettingsActivity.KEY_PREF_ENABLE_LARIDAAR_MODE, defaultLaridaarEnabled);
+
+        //setup display lock
+        displayWakeMode = preferences.getBoolean(SettingsActivity.KEY_PREF_ENABLE_DISPLAY_WAKE, false);
         if (displayWakeMode) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        //setup display preferences preferences
-        SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
 
-        pangtiFontSize = displaySettings.getInt("pangtiFontSize", defaultPangtiFontSize);
-        laridaarFontSize = pangtiFontSize;
-        transliterationFontSize = displaySettings.getInt("transliterationFontSize", defaultTransliterationFontSize);
-        translationFontSize = displaySettings.getInt("translationFontSize", defaultTranslationFontSize);
+        //save language prefs
+        SharedPreferences.Editor editor = preferences.edit();
 
-        pangtiVisibility = displaySettings.getInt("pangtiVisibility", defaultPangtiVisibility);
-        laridaarVisibility = displaySettings.getInt("laridaarVisibility", defaultLaridaarVisibility);
-        transliterationVisibility = displaySettings.getInt("transliterationVisibility", defaultTransliterationVisibility);
-        translationVisibility = displaySettings.getInt("translationVisibility", defaultTranslationVisibility);
-        laridaarMode = displaySettings.getBoolean("laridaarMode", defaultLaridaarEnabled);
+        editor.putString(SettingsActivity.KEY_PREF_SEARCH_LANGUAGE, translationId);
+        editor.putString(SettingsActivity.KEY_PREF_SEARCH_SCRIPT, transliterationId);
+        editor.apply();
 
         //setup display options
-        //        displayOptions = new DisplayOptionsFragment();
         displayOptionsView = (LinearLayout) findViewById(R.id.display_options);
         displayOptionsView.setVisibility(View.GONE);
         TextView bottomText = (TextView) findViewById(R.id.dpoBottom);
@@ -189,9 +198,9 @@ public class ShabadActivity extends AppCompatActivity {
         TextView gurmukhiToggleLabel = (TextView) findViewById(R.id.gurmukhiFontLabel);
         gurmukhiToggleLabel.setTypeface(anmolBold);
 
-        Switch gurmukhiSwitch = (Switch) findViewById(R.id.gurmukhiSwitch);
-        Switch transliterationSwitch = (Switch) findViewById(R.id.transliterationSwitch);
-        Switch translationSwitch = (Switch) findViewById(R.id.translationSwitch);
+        SwitchCompat gurmukhiSwitch = (SwitchCompat) findViewById(R.id.gurmukhiSwitch);
+        SwitchCompat transliterationSwitch = (SwitchCompat) findViewById(R.id.transliterationSwitch);
+        SwitchCompat translationSwitch = (SwitchCompat) findViewById(R.id.translationSwitch);
         gurmukhiSwitch.setChecked(pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE);
         transliterationSwitch.setChecked(transliterationVisibility == View.VISIBLE);
         translationSwitch.setChecked(translationVisibility == View.VISIBLE);
@@ -201,11 +210,12 @@ public class ShabadActivity extends AppCompatActivity {
         showSystemUI();
         shabadView.setOnTouchListener(new View.OnTouchListener() {
             float height;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Rect displayOptionsRect = new Rect();
                 displayOptionsView.getHitRect(displayOptionsRect);
-                if (!displayOptionsRect.contains((int)event.getX(), (int)event.getY())) {
+                if (!displayOptionsRect.contains((int) event.getX(), (int) event.getY())) {
                     displayOptionsView.setVisibility(View.GONE);
                 }
                 int action = event.getAction();
@@ -230,11 +240,7 @@ public class ShabadActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
         errorToast = Toast.makeText(getApplicationContext(), connError, duration);
 
-        if (targetPangti == -1) {
-            highlightPangti = false;
-        } else {
-            highlightPangti = true;
-        }
+        highlightPangti = targetPangti != -1;
 
         //execute api call
         if (isConnected()) {
@@ -249,28 +255,25 @@ public class ShabadActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         stopAudioStream();
-        if (wifiLock != null) {
-            wifiLock.release();
-        }
+
         //save preferences
-        SharedPreferences displaySettings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = displaySettings.edit();
+        SharedPreferences.Editor editor = preferences.edit();
 
-        editor.putBoolean("laridaarMode", laridaarMode);
-        editor.putInt("pangtiFontSize", pangtiFontSize);
-        editor.putInt("transliterationFontSize", transliterationFontSize);
-        editor.putInt("translationFontSize", translationFontSize);
-        editor.putInt("pangtiVisibility", pangtiVisibility);
-        editor.putInt("laridaarVisibility", laridaarVisibility);
-        editor.putInt("transliterationVisibility", transliterationVisibility);
-        editor.putInt("translationVisibility", translationVisibility);
-
+        editor.putBoolean(SettingsActivity.KEY_PREF_ENABLE_LARIDAAR_MODE, laridaarMode);
+        editor.putInt(SettingsActivity.KEY_PREF_FONT_SIZE_GURMUKHI, pangtiFontSize);
+        editor.putInt(SettingsActivity.KEY_PREF_FONT_SIZE_TRANSLITERATION, transliterationFontSize);
+        editor.putInt(SettingsActivity.KEY_PREF_FONT_SIZE_TRANSLATION, translationFontSize);
+        editor.putInt(SettingsActivity.KEY_PREF_VISIBILITY_GURMUKHI, pangtiVisibility);
+        editor.putInt(SettingsActivity.KEY_PREF_VISIBILITY_LARIDAAR, laridaarVisibility);
+        editor.putInt(SettingsActivity.KEY_PREF_VISIBILITY_TRANSLITERATION, transliterationVisibility);
+        editor.putInt(SettingsActivity.KEY_PREF_VISIBILITY_TRANSLATION, translationVisibility);
         editor.apply();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        displayWakeMode = preferences.getBoolean(SettingsActivity.KEY_PREF_ENABLE_DISPLAY_WAKE, false);
         if (displayWakeMode) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
@@ -280,10 +283,11 @@ public class ShabadActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        if (wifiLock != null) {
-            wifiLock.release();
-        }
         super.onPause();
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -372,14 +376,32 @@ public class ShabadActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @TargetApi(16)
+    @SuppressWarnings("deprecation")
+    public void cleanAudio(MediaPlayer player) {
+        if (android.os.Build.VERSION.SDK_INT >= 16) {
+            noiseSuppressed = NoiseSuppressor.isAvailable();
+        } else if (android.os.Build.VERSION.SDK_INT < 16) {
+            noiseSuppressed = false;
+        }
+        if (noiseSuppressed) {
+            NoiseSuppressor ns = NoiseSuppressor.create(player.getAudioSessionId());
+            ns.setEnabled(true);
+        }
+        Equalizer equalizer = new Equalizer(0,player.getAudioSessionId());
+        equalizer.setEnabled(true);
+        //presets: index[Normal, Classical, Dance, Flat, Folk, Heavy Metal, Hip Hop, Jazz, Pop, Rock]
+        equalizer.usePreset((short) 6);
+    }
+
     public void startAudioStream() {
         shabadAudio = new MediaPlayer();
-        shabadAudio.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+//        cleanAudio(shabadAudio);
         shabadAudio.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        audioUrl = audioBase +"/sggsj/sggsj-"+angString+".mp3";
+        String url = URL_AUDIO_BASE +"/sggsj/sggsj-"+angString+".mp3";
         Toast.makeText(this, "Starting audio stream", Toast.LENGTH_SHORT).show();
         try {
-            shabadAudio.setDataSource(audioUrl);
+            shabadAudio.setDataSource(url);
             shabadAudio.prepareAsync();
         } catch (IOException e) {
             Toast.makeText(this, "An error occurred with the stream", Toast.LENGTH_SHORT).show();
@@ -393,12 +415,6 @@ public class ShabadActivity extends AppCompatActivity {
             }
         });
 
-        wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-
-        if (wifiLock != null) {
-            wifiLock.acquire();
-        }
         this.invalidateOptionsMenu();
     }
 
@@ -409,9 +425,6 @@ public class ShabadActivity extends AppCompatActivity {
             shabadAudio.release();
             shabadAudio = null;
         }
-        if (wifiLock != null) {
-            wifiLock.release();
-        }
         this.invalidateOptionsMenu();
     }
 
@@ -421,9 +434,6 @@ public class ShabadActivity extends AppCompatActivity {
                 Toast.makeText(this, "Pausing playback", Toast.LENGTH_SHORT).show();
                 shabadAudio.pause();
             }
-        }
-        if (wifiLock != null) {
-            wifiLock.release();
         }
         this.invalidateOptionsMenu();
     }
@@ -502,9 +512,9 @@ public class ShabadActivity extends AppCompatActivity {
 
         ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
 
-        Switch gurmukhiSwitch = (Switch) findViewById(R.id.gurmukhiSwitch);
-        Switch transliterationSwitch = (Switch) findViewById(R.id.transliterationSwitch);
-        Switch translationSwitch = (Switch) findViewById(R.id.translationSwitch);
+        SwitchCompat gurmukhiSwitch = (SwitchCompat) findViewById(R.id.gurmukhiSwitch);
+        SwitchCompat transliterationSwitch = (SwitchCompat) findViewById(R.id.transliterationSwitch);
+        SwitchCompat translationSwitch = (SwitchCompat) findViewById(R.id.translationSwitch);
         gurmukhiSwitch.setChecked(pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE);
         transliterationSwitch.setChecked(transliterationVisibility == View.VISIBLE);
         translationSwitch.setChecked(translationVisibility == View.VISIBLE);
@@ -557,7 +567,7 @@ public class ShabadActivity extends AppCompatActivity {
     public void toggleText(View view) {
         int id = view.getId();
         int setVisible;
-        boolean switchOn = ((Switch) view).isChecked();
+        boolean switchOn = ((SwitchCompat) view).isChecked();
         if (switchOn) {
             setVisible = View.VISIBLE;
         } else {
@@ -637,7 +647,9 @@ public class ShabadActivity extends AppCompatActivity {
             shabadView.setAdapter(shabadDisplayAdapter);
 
             //set position to correct tukh
-            shabadView.setSelection(pangtiPosition);
+            if (highlightPangti) {
+                shabadView.setSelection(pangtiPosition);
+            }
             loading.dismiss();
         }
     }
@@ -688,6 +700,8 @@ public class ShabadActivity extends AppCompatActivity {
             if (!highlightPangti) {
                 pangti.setTypeface(anmolBani);
                 laridaar.setTypeface(anmolBani);
+                translation.setTypeface(null, Typeface.NORMAL);
+                transliteration.setTypeface(null, Typeface.NORMAL);
             }
             return v;
         }
@@ -707,11 +721,7 @@ public class ShabadActivity extends AppCompatActivity {
             if ((forward && nextShabad < 1430) || (!forward && nextShabad > 1)) {
                 enable = true;
             }
-        } else if ((forward && nextShabad < 3620) || (!forward && nextShabad > 1)) {
-            enable = true;
-        } else {
-            enable = false;
-        }
+        } else enable = (forward && nextShabad < 3620) || (!forward && nextShabad > 1);
         if (forward) {
             inc = 1;
         } else {
@@ -739,12 +749,11 @@ public class ShabadActivity extends AppCompatActivity {
             } else if (displayMode == displayModeHukamnama) {
                 displayModeString = "random/1";
             }
-            urlString = apiBase+"/"+displayModeString+"/"+translationId+"/"+transliterationId;
+            urlString = URL_API_BASE+"/"+displayModeString+"/"+translationId+"/"+transliterationId;
         } catch (Exception e) {
             Log.d(DEBUG_TAG, e.toString());
             return null;
         }
-        Log.d("URL ______", urlString);
         return urlString;
     }
 
