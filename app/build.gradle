@@ -8,8 +8,8 @@ android {
         applicationId "com.irvanjit.discovergurbani"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 4
-        versionName "1.02"
+        versionCode 5
+        versionName "1.1"
     }
     buildTypes {
         release {
