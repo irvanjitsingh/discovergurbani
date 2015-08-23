@@ -107,12 +107,12 @@ public class ShabadActivity extends AppCompatActivity {
     public static final String DEFAULT_TRANSLATION_ID = "13";
     public static final String DEFAULT_TRANSLITERATION_ID = "69";
 
-    public SharedPreferences preferences;
+    private SharedPreferences preferences;
 
     public static final String DEBUG_TAG = "HttpDebug";
 
     public static final String URL_API_BASE = "http://api.sikher.com";
-    public static final String URL_AUDIO_BASE = "http://media.sikher.com/audio";
+    private static final String URL_AUDIO_BASE = "http://media.sikher.com/audio";
 
     //JSON Nodes
     public static final String TAG_PANGTI_ID = "id";
@@ -394,7 +394,7 @@ public class ShabadActivity extends AppCompatActivity {
         equalizer.usePreset((short) 6);
     }
 
-    public void startAudioStream() {
+    private void startAudioStream() {
         shabadAudio = new MediaPlayer();
 //        cleanAudio(shabadAudio);
         shabadAudio.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -418,7 +418,7 @@ public class ShabadActivity extends AppCompatActivity {
         this.invalidateOptionsMenu();
     }
 
-    public void stopAudioStream() {
+    private void stopAudioStream() {
         if (shabadAudio != null) {
             Toast.makeText(this, "Stopping playback", Toast.LENGTH_SHORT).show();
             shabadAudio.stop();
@@ -428,7 +428,7 @@ public class ShabadActivity extends AppCompatActivity {
         this.invalidateOptionsMenu();
     }
 
-    public void pauseAudioStream() {
+    private void pauseAudioStream() {
         if (shabadAudio != null) {
             if (shabadAudio.isPlaying()) {
                 Toast.makeText(this, "Pausing playback", Toast.LENGTH_SHORT).show();
@@ -438,7 +438,7 @@ public class ShabadActivity extends AppCompatActivity {
         this.invalidateOptionsMenu();
     }
 
-    public void resumeAudioStream() {
+    private void resumeAudioStream() {
         if (shabadAudio != null) {
             if (!shabadAudio.isPlaying()) {
                 Toast.makeText(this, "Resuming playback", Toast.LENGTH_SHORT).show();
@@ -448,16 +448,16 @@ public class ShabadActivity extends AppCompatActivity {
         this.invalidateOptionsMenu();
     }
 
-//    //excessive noise handler
-//    public class MusicIntentReceiver extends android.content.BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context ctx, Intent intent) {
-//            if (intent.getAction().equals(
-//                    android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
-//                stopAudioStream();
-//            }
-//        }
-//    }
+    //excessive noise handler
+    public class MusicIntentReceiver extends android.content.BroadcastReceiver {
+        @Override
+        public void onReceive(Context ctx, Intent intent) {
+            if (intent.getAction().equals(
+                    android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+                stopAudioStream();
+            }
+        }
+    }
 
     private void hideSystemUI() {
         // Set the IMMERSIVE flag.
@@ -481,13 +481,13 @@ public class ShabadActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    public void toggleLaridaar() {
+    private void toggleLaridaar() {
         laridaarMode = !laridaarMode;
         laridaarSetup();
         ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
     }
 
-    public void laridaarSetup() {
+    private void laridaarSetup() {
         if (pangtiVisibility == View.VISIBLE || laridaarVisibility == View.VISIBLE) {
             if (laridaarMode) {
                 pangtiVisibility = View.GONE;
@@ -499,7 +499,7 @@ public class ShabadActivity extends AppCompatActivity {
         }
     }
 
-    public void resetDisplaySettings() {
+    private void resetDisplaySettings() {
         laridaarMode = defaultLaridaarEnabled;
         pangtiFontSize = defaultPangtiFontSize;
         laridaarFontSize = defaultPangtiFontSize;
@@ -712,24 +712,24 @@ public class ShabadActivity extends AppCompatActivity {
     }
 
     private void gotoNextShabad(String id, boolean forward) {
-
         stopAudioStream();
         int inc;
-        boolean enable = false;
-        int nextShabad = Integer.parseInt(id);
-        if (displayMode != displayModeShabad) {
-            if ((forward && nextShabad < 1430) || (!forward && nextShabad > 1)) {
-                enable = true;
-            }
-        } else enable = (forward && nextShabad < 3620) || (!forward && nextShabad > 1);
         if (forward) {
             inc = 1;
         } else {
             inc = -1;
         }
+        int nextShabad = Integer.parseInt(id) + inc;
+        int upperLimit;
+        if (displayMode == displayModeShabad) {
+            upperLimit = 3620;
+        } else {
+            upperLimit = 1430;
+        }
+        boolean enable = (forward && nextShabad < upperLimit) || (!forward && nextShabad > 1);
         if (enable) {
             if (isConnected()) {
-                new DisplayShabadTask().execute(String.valueOf(nextShabad + inc));
+                new DisplayShabadTask().execute(String.valueOf(nextShabad));
                 try {
                     shabadId = String.valueOf(Integer.parseInt(shabadId) + inc);
                 } catch (Exception e) {
@@ -780,7 +780,7 @@ public class ShabadActivity extends AppCompatActivity {
     }
 
     //shabad json parser
-    public String readJson(InputStream in) throws IOException {
+    private String readJson(InputStream in) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         pangtiPosition = 0;
         String pangti = "Shabad";

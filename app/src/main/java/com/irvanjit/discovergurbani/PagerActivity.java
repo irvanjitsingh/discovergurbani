@@ -2,6 +2,7 @@ package com.irvanjit.discovergurbani;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -63,8 +64,8 @@ public class PagerActivity extends AppCompatActivity {
         startActivity(in);
     }
 
-    public void hideKeyboard() {
-        if(getCurrentFocus()!=null) {
+    private void hideKeyboard() {
+        if(getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -72,7 +73,7 @@ public class PagerActivity extends AppCompatActivity {
 
     public class HomeFragmentPagerAdapter extends FragmentPagerAdapter {
         final int PAGE_COUNT = 4;
-        private String tabTitles[] = new String[] { "About", "Read", "Search", "Hukam" };
+        private final String[] tabTitles = new String[] { "About", "Read", "Search", "Hukam" };
         private Context context;
 
         public HomeFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -122,8 +123,7 @@ public class PagerActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_page_search, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_page_search, container, false);
         }
     }
 

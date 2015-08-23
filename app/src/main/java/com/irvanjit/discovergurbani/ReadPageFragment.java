@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,11 +17,11 @@ import android.widget.Toast;
 
 public class ReadPageFragment extends Fragment {
 
-    String translationId;
-    String transliterationId;
-    String angNumber;
-    EditText angField;
-    Toast toast;
+    private String translationId;
+    private String transliterationId;
+    private String angNumber;
+    private EditText angField;
+    private Toast toast;
 
     public static ReadPageFragment newInstance() {
         ReadPageFragment fragment = new ReadPageFragment();
@@ -49,7 +48,7 @@ public class ReadPageFragment extends Fragment {
         return rootView;
     }
 
-    void setupButton(View view) {
+    private void setupButton(View view) {
         angField = (EditText)view.findViewById(R.id.ang_number);
         angField.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         Button button = (Button)view.findViewById(R.id.read_button);
@@ -79,7 +78,7 @@ public class ReadPageFragment extends Fragment {
         });
     }
 
-    public void setupSpinners(View view) {
+    private void setupSpinners(View view) {
         Spinner translationSpinner = new AwesomeSpinner(getActivity(), view,
                 R.id.translation_spinner, R.array.translation_strings, 0).getAwesomeSpinner();
         Spinner transliterationSpinner = new AwesomeSpinner(getActivity(), view,

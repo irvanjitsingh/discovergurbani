@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AwesomeSpinner {
-    Spinner spinner;
-    ArrayAdapter<CharSequence> adapter;
+class AwesomeSpinner {
+    private Spinner spinner;
+    private ArrayAdapter<CharSequence> adapter;
 
-    public ArrayList<Integer> disabledTranslationIndices;
-    public ArrayList<Integer> disabledTransliterationIndices;
-    private ArrayList<Integer> disabledValues;
+    public final ArrayList<Integer> disabledTranslationIndices;
+    public final ArrayList<Integer> disabledTransliterationIndices;
+    private final ArrayList<Integer> disabledValues;
 
     public AwesomeSpinner(Context context, View view, int spinnerId, int arrayId, int spinnerType) {
 
