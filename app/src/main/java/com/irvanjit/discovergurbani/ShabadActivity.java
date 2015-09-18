@@ -454,17 +454,6 @@ public class ShabadActivity extends AppCompatActivity {
         this.invalidateOptionsMenu();
     }
 
-    //excessive noise handler
-    public class MusicIntentReceiver extends android.content.BroadcastReceiver {
-        @Override
-        public void onReceive(Context ctx, Intent intent) {
-            if (intent.getAction().equals(
-                    android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
-                stopAudioStream();
-            }
-        }
-    }
-
     private void hideSystemUI() {
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
