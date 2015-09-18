@@ -126,6 +126,10 @@ public class ShabadActivity extends AppCompatActivity {
     public static final String TAG_TRANSLITERATION = "transliteration";
     public static final String TAG_SCRIPTURE = "scripture";
     public static final String TAG_META = "meta";
+    public static final String TAG_RAAG_ID = "id";
+    public static final String TAG_RAAG_NAME = "melody";
+    public static final String TAG_RAAG_GURMUKHI = "gurmukhi";
+    public static final String TAG_RAAG_DESCRIPTION = "description";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,7 +252,6 @@ public class ShabadActivity extends AppCompatActivity {
         } else {
             errorToast.show();
         }
-        firstLoad = false;
     }
 
     @Override
@@ -323,6 +326,11 @@ public class ShabadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        if (id == R.id.action_about) {
+            Intent settingsIntent = new Intent(getApplicationContext(), AboutPageActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(settingsIntent);
@@ -358,9 +366,7 @@ public class ShabadActivity extends AppCompatActivity {
         }
         if (id == R.id.action_audio_stop) {
             if (shabadAudio != null) {
-                if (shabadAudio.isPlaying()) {
-                    stopAudioStream();
-                }
+                 stopAudioStream();
             }
             return true;
         }
@@ -601,6 +607,7 @@ public class ShabadActivity extends AppCompatActivity {
             errorMessage = (TextView)findViewById(R.id.shabadError);
             errorMessage.setVisibility(View.GONE);
             shabadError = false;
+            shabadView.setAdapter(null);
             shabadList.clear();
             if (displayMode != displayModeShabad || !firstLoad) {
                 highlightPangti = false;
@@ -651,6 +658,7 @@ public class ShabadActivity extends AppCompatActivity {
                 shabadView.setSelection(pangtiPosition);
             }
             loading.dismiss();
+            firstLoad = false;
         }
     }
 
@@ -726,7 +734,7 @@ public class ShabadActivity extends AppCompatActivity {
         } else {
             upperLimit = 1430;
         }
-        boolean enable = (forward && nextShabad < upperLimit) || (!forward && nextShabad > 1);
+        boolean enable = (forward && nextShabad <= upperLimit) || (!forward && nextShabad >= 1);
         if (enable) {
             if (isConnected()) {
                 new DisplayShabadTask().execute(String.valueOf(nextShabad));

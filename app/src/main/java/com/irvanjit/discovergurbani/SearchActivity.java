@@ -118,6 +118,11 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        if (id == R.id.action_about) {
+            Intent settingsIntent = new Intent(getApplicationContext(), AboutPageActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(settingsIntent);

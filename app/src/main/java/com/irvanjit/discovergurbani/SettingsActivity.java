@@ -24,6 +24,7 @@ public class SettingsActivity extends AppCompatActivity {
     //misc prefs
     public static final String KEY_PREF_ENABLE_DISPLAY_WAKE = "pref_display_wake";
     public static final String KEY_PREF_ENABLE_AUTO_SEARCH = "pref_auto_search";
+    public static final String KEY_PREF_IS_FIRST_RUN = "pref_first_run";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

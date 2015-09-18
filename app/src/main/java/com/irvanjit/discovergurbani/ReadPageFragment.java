@@ -63,7 +63,6 @@ public class ReadPageFragment extends Fragment {
                 if (ang < 1 || ang > 1430) {
                     toast.show();
                 } else {
-                    getActivity().getWindow().getDecorView().requestFocus();
                     final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                     Intent in = new Intent(getActivity(), ShabadActivity.class);

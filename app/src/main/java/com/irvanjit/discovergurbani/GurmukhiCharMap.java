@@ -65,7 +65,7 @@ class GurmukhiCharMap {
         charMap.put('q', '\u0A24');
         charMap.put('w', '\u0A3E');
         charMap.put('e', '\u0A72');
-        charMap.put('r', '\u0A24');
+        charMap.put('r', '\u0A30');
         charMap.put('t', '\u0A1F');
         charMap.put('y', '\u0A47');
         charMap.put('u', '\u0A41');
