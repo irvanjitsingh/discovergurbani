@@ -62,9 +62,12 @@
         android:gravity="center_horizontal|center_vertical"
         android:paddingTop="5dp"
         android:paddingBottom="5dp" />
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/search_results"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/result"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/result"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"/>
 </RelativeLayout>

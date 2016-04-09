@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/primary_material_dark"
     android:paddingTop="15dp"
     android:paddingLeft="15dp"
@@ -27,6 +27,7 @@
             <TextView android:id="@+id/metaAng"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="test"
                 android:textStyle="bold"
                 android:textColor="@color/metadata_blue"/>
         </LinearLayout>

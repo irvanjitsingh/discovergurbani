@@ -2,6 +2,8 @@
   <dictionary name="Irvan">
     <words>
       <w>anmol</w>
+      <w>basanti</w>
+      <w>cardview</w>
       <w>discovergurbani</w>
       <w>gurbani</w>
       <w>gurmukhi</w>
@@ -16,6 +18,7 @@
       <w>shabad</w>
       <w>shabads</w>
       <w>shabadview</w>
+      <w>sikher</w>
     </words>
   </dictionary>
 </component>

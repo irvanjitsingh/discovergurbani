@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.JsonReader;
 import android.util.Log;
@@ -23,9 +25,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +37,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -47,11 +47,10 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     private TextView resultMessage;
     private ProgressDialog loading;
 
-    private ArrayList<HashMap<String, String>> shabadList;
+//    private ArrayList<HashMap<String, String>> shabadList;
+    private List<ShabadList> shabadList;
     private ArrayList<String> shabadIdList;
     private ArrayList<Integer> pangtiIdList;
-    private String[] shabadListKeys;
-    private int[] shabadListValues;
     private boolean autoSearchEnabled;
     private boolean isAutoSearch;
 
@@ -59,7 +58,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     private String translationId;
     private String transliterationId;
 
-    private ListView shabadsListView;
+//    private ListView shabadsListView;
+    private RecyclerView shabadsListView;
     private SharedPreferences preferences;
 
 
@@ -196,11 +196,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 query = searchView.getQuery().toString();
 
                 if (autoSearchEnabled && query.length() > 2) {
-                    resultMessage.setText("searching...");
+                    resultMessage.setText("searchi2ng...");
                 }
-                //            int c = query.codePointAt(0);
-                //            boolean queryIsGurmukhi = (c >= 0x0A00 && c <= 0x0A60);
-                //            boolean queryIsLatin = query.charAt(0) < 128;
 
                 isAutoSearch = true;
                 StringBuilder gurmukhi = null;
@@ -259,73 +256,96 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void setupShabadsListView() {
-        shabadList = new ArrayList<HashMap<String, String>>();
+        shabadList = new ArrayList<ShabadList>();
         shabadIdList = new ArrayList<String>();
         pangtiIdList = new ArrayList<Integer>();
 
-        shabadsListView = (ListView) findViewById(R.id.search_results);
-        shabadsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        shabadsListView = (RecyclerView) findViewById(R.id.search_results);
+        shabadsListView.hasFixedSize();
 
-                if (isAutoSearch && autoSearchEnabled) {
-                    shabadsListView.requestFocus();
-                    hideKeyboard();
-                }
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        shabadsListView.setLayoutManager(llm);
 
-                // Get shabad metadata
-                String shabadId = shabadIdList.get(position);
-                int pangtiId = pangtiIdList.get(position);
+        shabadsListView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        if (isAutoSearch && autoSearchEnabled) {
+                            shabadsListView.requestFocus();
+                            hideKeyboard();
+                        }
 
-                // Start shabad activity
-                Intent in = new Intent(getApplicationContext(),
-                        ShabadActivity.class);
-                in.putExtra(ShabadActivity.TAG_SHABAD, shabadId);
-                in.putExtra(ShabadActivity.TAG_PANGTI_ID, pangtiId);
-                in.putExtra(ShabadActivity.TAG_TRANSLATION, translationId);
-                in.putExtra(ShabadActivity.TAG_TRANSLITERATION, transliterationId);
-                in.putExtra("displayMode", 0);
-                startActivity(in);
-            }
-        });
+                        // Get shabad metadata
+                        ShabadList list = shabadList.get(position);
+                        String shabadId = String.valueOf(list.shabadId);
+                        int pangtiId = list.pangtiId;
+
+                        // Start shabad activity
+                        Intent in = new Intent(getApplicationContext(),
+                                ShabadActivity.class);
+                        in.putExtra(ShabadActivity.TAG_SHABAD, shabadId);
+                        in.putExtra(ShabadActivity.TAG_PANGTI_ID, pangtiId);
+                        in.putExtra(ShabadActivity.TAG_TRANSLATION, translationId);
+                        in.putExtra(ShabadActivity.TAG_TRANSLITERATION, transliterationId);
+                        in.putExtra("displayMode", 0);
+                        startActivity(in);
+                    }
+                })
+        );
     }
 
-    private void setupShabadListAdapter() {
-        shabadListKeys = new String[] {ShabadActivity.TAG_PANGTI, ShabadActivity.TAG_TRANSLATION, ShabadActivity.TAG_TRANSLITERATION, ShabadActivity.TAG_META};
-        shabadListValues = new int[] {R.id.pangti, R.id.translation, R.id.transliteration, R.id.meta};
-
-        ListAdapter shabadListAdapter = new ShabadListAdapter(
-                SearchActivity.this, shabadList, R.layout.search_item, shabadListKeys, shabadListValues);
-        shabadsListView.setAdapter(shabadListAdapter);
+    public class ShabadList {
+        protected int shabadId;
+        protected int pangtiId;
+        protected String pangti;
+        protected String translation;
+        protected String transliteration;
+        protected String meta;
     }
 
-    public class ShabadListAdapter extends SimpleAdapter {
+    public class ShabadAdapter extends RecyclerView.Adapter<ShabadAdapter.ShabadViewHolder> {
 
-        private final ArrayList<HashMap<String, String>> results;
-
-        public ShabadListAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            this.results = data;
+        public ShabadAdapter() {
         }
 
-        public View getView(int position, View view, ViewGroup parent) {
-            Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
-            View v = view;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.search_item, null);
-            }
-            TextView pangti = (TextView) v.findViewById(R.id.pangti);
-            TextView translation = (TextView) v.findViewById(R.id.translation);
-            TextView transliteration = (TextView) v.findViewById(R.id.transliteration);
-            TextView meta = (TextView) v.findViewById(R.id.meta);
+        @Override
+        public int getItemCount() {
+            return shabadList.size();
+        }
 
-            pangti.setText(results.get(position).get(ShabadActivity.TAG_PANGTI));
-            pangti.setTypeface(anmolBani);
-            translation.setText(results.get(position).get(ShabadActivity.TAG_TRANSLATION));
-            transliteration.setText(results.get(position).get(ShabadActivity.TAG_TRANSLITERATION));
-            meta.setText(results.get(position).get(ShabadActivity.TAG_META));
-            return v;
+        @Override
+        public void onBindViewHolder(ShabadViewHolder shabadHolder, int i) {
+            Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+            ShabadList ci = shabadList.get(i);
+            shabadHolder.vPangti.setTypeface(anmolBani);
+            shabadHolder.vPangti.setText(ci.pangti);
+            shabadHolder.vTranslation.setText(ci.translation);
+            shabadHolder.vTransliteration.setText(ci.transliteration);
+            shabadHolder.vMeta.setText(ci.meta);
+        }
+
+        @Override
+        public ShabadViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.search_item, viewGroup, false);
+
+            return new ShabadViewHolder(itemView);
+        }
+
+        public class ShabadViewHolder extends RecyclerView.ViewHolder {
+            protected TextView vPangti;
+            protected TextView vTranslation;
+            protected TextView vTransliteration;
+            protected TextView vMeta;
+
+            public ShabadViewHolder(View v) {
+                super(v);
+                vPangti =  (TextView) v.findViewById(R.id.pangti);
+                vTranslation = (TextView)  v.findViewById(R.id.translation);
+                vTransliteration = (TextView)  v.findViewById(R.id.transliteration);
+                vMeta = (TextView) v.findViewById(R.id.meta);
+            }
         }
     }
 
@@ -341,7 +361,6 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            shabadList.clear();
             if (!isAutoSearch) {
                 setupLoadingDialog(loading);
                 loading.show();
@@ -359,7 +378,10 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         @Override
         protected void onPostExecute(String result) {
             resultMessage.setText(result);
-            setupShabadListAdapter();
+
+            ShabadAdapter shabadAdapter = new ShabadAdapter();
+            shabadsListView.setAdapter(shabadAdapter);
+
             if (!isAutoSearch) {
                 loading.dismiss();
                 shabadsListView.requestFocus();
@@ -411,6 +433,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     private String parseQueryJson(InputStream in) throws IOException {
         shabadIdList.clear();
         pangtiIdList.clear();
+        shabadList.clear();
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         int pangti_id = -1;
         int shabad_id = -1;
@@ -425,7 +448,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             reader.beginArray();
             while (reader.hasNext()) {
                 reader.beginObject();
-                HashMap<String, String> shabad = new HashMap<String, String>();
+//                HashMap<String, String> shabad = new HashMap<String, String>();
+                ShabadList shabad = new ShabadList();
                 while (reader.hasNext()) {
                     String name = reader.nextName();
                     if (name.equals(ShabadActivity.TAG_PANGTI_ID)) {
@@ -514,20 +538,28 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 if (!author.equals("None")) {
                     shabadIdList.add(String.valueOf(shabad_id));
                     pangtiIdList.add(pangti_id);
-                    shabad.put(ShabadActivity.TAG_PANGTI, pangti);
-                    shabad.put(ShabadActivity.TAG_TRANSLATION, translation);
-                    shabad.put(ShabadActivity.TAG_TRANSLITERATION, transliteration);
-                    meta = author+" Ji | Ang "+String.valueOf(ang)+ " | "+section;
-                    shabad.put(ShabadActivity.TAG_META, meta);
+                    shabad.pangtiId = pangti_id;
+                    shabad.shabadId = shabad_id;
+                    shabad.pangti = pangti;
+                    shabad.translation = translation;
+                    shabad.transliteration = transliteration;
+                    meta = author+" Ji | Ang "+String.valueOf(ang)+" | "+section;
+                    shabad.meta = meta;
                     shabadList.add(shabad);
                 }
+
                 reader.endObject();
             }
             reader.endArray();
         } finally {
             reader.close();
         }
-        return "Your search returned "+String.valueOf(shabadIdList.size())+" shabad(s)";
+        int numberOfResults = shabadIdList.size();
+        String resultsText = "Your search returned "+String.valueOf(numberOfResults)+" shabad";
+        if (numberOfResults > 1) {
+            resultsText += "s";
+        }
+        return resultsText;
     }
 
     private boolean isConnected() {

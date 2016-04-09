@@ -3,12 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.irvanjit.discovergurbani.ShabadActivity">
-    <ListView
+    <android.support.v7.widget.RecyclerView
             android:id="@+id/shabadview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="2sp"/>
+            android:layout_height="match_parent"/>
     <LinearLayout android:id="@+id/display_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +54,6 @@
                     <android.support.v7.widget.AppCompatButton android:id="@+id/decreaseGurmukhiSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="toggleGurmukhiSize"
                         android:text="@string/decreaseFontSizeLabel"
                         android:textSize="20sp"
                         android:minWidth="60dp" />
@@ -70,7 +67,6 @@
                     <android.support.v7.widget.AppCompatButton android:id="@+id/increaseGurmukhiSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="toggleGurmukhiSize"
                         android:text="@string/increaseFontSizeLabel"
                         android:textSize="20sp"
                         android:minWidth="60dp" />
@@ -166,7 +162,6 @@
                     <Button android:id="@+id/decreaseTranslationSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="toggleTranslationSize"
                         android:text="@string/decreaseFontSizeLabel"
                         android:textSize="20sp"
                         android:minWidth="60dp" />
@@ -181,7 +176,6 @@
                     <Button android:id="@+id/increaseTranslationSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="toggleTranslationSize"
                         android:text="@string/increaseFontSizeLabel"
                         android:textSize="20sp"
                         android:minWidth="60dp" />

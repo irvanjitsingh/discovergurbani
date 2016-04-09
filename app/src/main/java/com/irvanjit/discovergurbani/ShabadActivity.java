@@ -1,6 +1,5 @@
 package com.irvanjit.discovergurbani;
 
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +9,14 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.audiofx.Equalizer;
-import android.media.audiofx.NoiseSuppressor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
 import android.util.Log;
 import android.util.TypedValue;
@@ -28,11 +27,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.support.v7.widget.SwitchCompat;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +39,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ShabadActivity extends AppCompatActivity {
 
@@ -55,17 +50,16 @@ public class ShabadActivity extends AppCompatActivity {
     private TextView ang;
     private TextView raag;
     private TextView author;
-    private ListView shabadView;
+    private RecyclerView shabadView;
     private String shabadId;
     private String translationId;
     private String transliterationId;
     private String angString;
     private String raagString;
     private String authorString;
-    private ArrayList<HashMap<String, String>> shabadList;
+    private ArrayList<ShabadList> shabadList;
     private ProgressDialog loading;
     private LinearLayout displayOptionsView;
-    private ListAdapter shabadDisplayAdapter;
     private MediaPlayer shabadAudio;
     private Toast errorToast;
     private View mDecorView;
@@ -74,7 +68,6 @@ public class ShabadActivity extends AppCompatActivity {
     private boolean highlightPangti;
     private boolean firstLoad = true;
     private boolean shabadError;
-    private boolean noiseSuppressed;
     private int targetPangti;
     private int pangtiPosition;
     private int displayMode;
@@ -146,8 +139,13 @@ public class ShabadActivity extends AppCompatActivity {
         translationId = intent.getStringExtra(TAG_TRANSLATION);
         transliterationId = intent.getStringExtra(TAG_TRANSLITERATION);
         displayMode = intent.getIntExtra("displayMode", displayMode);
-        shabadList = new ArrayList<HashMap<String, String>>();
-        shabadView = (ListView) findViewById(R.id.shabadview);
+        shabadList = new ArrayList<ShabadList>();
+        shabadView = (RecyclerView) findViewById(R.id.shabadview);
+        shabadView.hasFixedSize();
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        shabadView.setLayoutManager(llm);
 
         //setup sirlekh header
         TypedValue tv = new TypedValue();
@@ -382,23 +380,23 @@ public class ShabadActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @TargetApi(16)
-    @SuppressWarnings("deprecation")
-    public void cleanAudio(MediaPlayer player) {
-        if (android.os.Build.VERSION.SDK_INT >= 16) {
-            noiseSuppressed = NoiseSuppressor.isAvailable();
-        } else if (android.os.Build.VERSION.SDK_INT < 16) {
-            noiseSuppressed = false;
-        }
-        if (noiseSuppressed) {
-            NoiseSuppressor ns = NoiseSuppressor.create(player.getAudioSessionId());
-            ns.setEnabled(true);
-        }
-        Equalizer equalizer = new Equalizer(0,player.getAudioSessionId());
-        equalizer.setEnabled(true);
-        //presets: index[Normal, Classical, Dance, Flat, Folk, Heavy Metal, Hip Hop, Jazz, Pop, Rock]
-        equalizer.usePreset((short) 6);
-    }
+//    @TargetApi(16)
+//    @SuppressWarnings("deprecation")
+//    public void cleanAudio(MediaPlayer player) {
+//        if (android.os.Build.VERSION.SDK_INT >= 16) {
+//            noiseSuppressed = NoiseSuppressor.isAvailable();
+//        } else if (android.os.Build.VERSION.SDK_INT < 16) {
+//            noiseSuppressed = false;
+//        }
+//        if (noiseSuppressed) {
+//            NoiseSuppressor ns = NoiseSuppressor.create(player.getAudioSessionId());
+//            ns.setEnabled(true);
+//        }
+//        Equalizer equalizer = new Equalizer(0,player.getAudioSessionId());
+//        equalizer.setEnabled(true);
+//        //presets: index[Normal, Classical, Dance, Flat, Folk, Heavy Metal, Hip Hop, Jazz, Pop, Rock]
+//        equalizer.usePreset((short) 6);
+//    }
 
     private void startAudioStream() {
         shabadAudio = new MediaPlayer();
@@ -479,7 +477,7 @@ public class ShabadActivity extends AppCompatActivity {
     private void toggleLaridaar() {
         laridaarMode = !laridaarMode;
         laridaarSetup();
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
     }
 
     private void laridaarSetup() {
@@ -505,7 +503,7 @@ public class ShabadActivity extends AppCompatActivity {
         translationVisibility = defaultTranslationVisibility;
         transliterationVisibility = defaultTransliterationVisibility;
 
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
 
         SwitchCompat gurmukhiSwitch = (SwitchCompat) findViewById(R.id.gurmukhiSwitch);
         SwitchCompat transliterationSwitch = (SwitchCompat) findViewById(R.id.transliterationSwitch);
@@ -528,7 +526,8 @@ public class ShabadActivity extends AppCompatActivity {
                 laridaarFontSize += 2;
             }
         }
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
+
     }
 
     public void toggleTranslationSize(View view) {
@@ -542,7 +541,8 @@ public class ShabadActivity extends AppCompatActivity {
                 translationFontSize += 2;
             }
         }
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
+
     }
 
     public void toggleTransliterationSize(View view) {
@@ -556,7 +556,8 @@ public class ShabadActivity extends AppCompatActivity {
                 transliterationFontSize += 2;
             }
         }
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
+
     }
 
     public void toggleText(View view) {
@@ -579,7 +580,8 @@ public class ShabadActivity extends AppCompatActivity {
         } else if (id == R.id.transliterationSwitch) {
             transliterationVisibility = setVisible;
         }
-        ((SimpleAdapter)((HeaderViewListAdapter)shabadView.getAdapter()).getWrappedAdapter()).notifyDataSetChanged();
+        shabadView.getAdapter().notifyDataSetChanged();
+
     }
 
     private class DisplayShabadTask extends AsyncTask<String, Void, String> {
@@ -589,14 +591,12 @@ public class ShabadActivity extends AppCompatActivity {
             super.onPreExecute();
             //metadata header
             if (firstLoad) {
-                View shabadHeader = getLayoutInflater().inflate(R.layout.shabad_header, null);
-                shabadHeader.setPadding(15, actionBarHeight + (actionBarHeight / 2) + 10, 15, 15);
-                shabadView.addHeaderView(shabadHeader);
+//                shabadHeader.setMinimumWidth(getActionBar().);
+//                shabadView.addItemDecoration(new HeaderDecoration(shabadHeader));
             }
             errorMessage = (TextView)findViewById(R.id.shabadError);
-            errorMessage.setVisibility(View.GONE);
+//            errorMessage.setVisibility(View.GONE);
             shabadError = false;
-            shabadView.setAdapter(null);
             shabadList.clear();
             if (displayMode != displayModeShabad || !firstLoad) {
                 highlightPangti = false;
@@ -621,90 +621,133 @@ public class ShabadActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
-
-            if (shabadError) {
-                errorMessage.setVisibility(View.VISIBLE);
-                errorMessage.setText(result);
-            }
-
-            //set header text
-            ang = (TextView) findViewById(R.id.metaAng);
-            raag = (TextView) findViewById(R.id.metaSection);
-//            author = (TextView) findViewById(R.id.metaAuthor);
-            ang.setText(angString);
-            raag.setText(raagString);
-
-            //init shabad adapter
-            shabadDisplayAdapter = new ShabadDisplayAdapter(
-                    ShabadActivity.this, shabadList,
-                    R.layout.shabad_item, new String[]
-                    {TAG_PANGTI, TAG_LARIDAAR, TAG_TRANSLATION, TAG_TRANSLITERATION},
-                    new int[] { R.id.pangti, R.id.laridaar, R.id.translation, R.id.transliteration});
-            shabadView.setAdapter(shabadDisplayAdapter);
+//            if (shabadError) {
+//                errorMessage.setVisibility(View.VISIBLE);
+//                errorMessage.setText(result);
+//            }
+            ShabadAdapter shabadAdapter = new ShabadAdapter();
+            shabadView.setAdapter(shabadAdapter);
 
             //set position to correct tukh
             if (highlightPangti) {
-                shabadView.setSelection(pangtiPosition);
+                shabadView.getLayoutManager().scrollToPosition(pangtiPosition-1);
             }
             loading.dismiss();
             firstLoad = false;
         }
     }
 
-    public class ShabadDisplayAdapter extends SimpleAdapter {
-        private ArrayList<HashMap<String, String>> results;
+    public class ShabadList {
+        protected String pangti;
+        protected String laridaar;
+        protected String translation;
+        protected String transliteration;
+    }
 
-        public ShabadDisplayAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            this.results = data;
+    public class ShabadAdapter extends RecyclerView.Adapter<ShabadAdapter.ShabadViewHolder> {
+        private static final int TYPE_HEADER = 0;
+        private static final int TYPE_ITEM = 1;
+
+        Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
+        Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani-Bold.ttf");
+
+        public ShabadAdapter() {
         }
 
-        public View getView(int position, View view, ViewGroup parent) {
-            Typeface anmolBani = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani.ttf");
-            Typeface anmolBaniBold = Typeface.createFromAsset(getAssets(), "fonts/AnmolUniBani-Bold.ttf");
-            View v = view;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.shabad_item, null);
+        public class ShabadViewHolder extends RecyclerView.ViewHolder {
+            protected TextView vPangti;
+            protected TextView vLaridaar;
+            protected TextView vTranslation;
+            protected TextView vTransliteration;
+
+//            protected TextView vRaag;
+//            protected TextView vAuthor;
+//            protected TextView vAng;
+//            protected TextView vError;
+
+            public ShabadViewHolder(View v) {
+                super(v);
+                vPangti =  (TextView) v.findViewById(R.id.gurmukhi);
+                vLaridaar = (TextView) v.findViewById(R.id.laridaar);
+                vTranslation = (TextView)  v.findViewById(R.id.translation);
+                vTransliteration = (TextView)  v.findViewById(R.id.transliteration);
             }
 
-            pangti = (TextView) v.findViewById(R.id.gurmukhi);
-            laridaar = (TextView) v.findViewById(R.id.laridaar);
-            translation = (TextView) v.findViewById(R.id.translation);
-            transliteration = (TextView) v.findViewById(R.id.transliteration);
+//            public ShabadViewHolder(View v, boolean isHeader) {
+//                super(v);
+//                vRaag =  (TextView) v.findViewById(R.id.metaSection);
+//                vAuthor = (TextView) v.findViewById(R.id.metaAuthor);
+//                vAng = (TextView)  v.findViewById(R.id.metaAng);
+//                vError = (TextView)  v.findViewById(R.id.shabadError);
+//            }
+        }
 
-            pangti.setText(results.get(position).get(TAG_PANGTI));
-            pangti.setTypeface(anmolBani);
-            pangti.setTextSize(TypedValue.COMPLEX_UNIT_SP, pangtiFontSize);
-            pangti.setVisibility(pangtiVisibility);
-            laridaar.setText(results.get(position).get(TAG_LARIDAAR));
-            laridaar.setTypeface(anmolBani);
-            laridaar.setTextSize(TypedValue.COMPLEX_UNIT_SP, laridaarFontSize);
-            laridaar.setVisibility(laridaarVisibility);
+        @Override
+        public int getItemCount() {
+            return shabadList.size();
+        }
 
-            translation.setText(results.get(position).get(TAG_TRANSLATION));
-            translation.setTextSize(TypedValue.COMPLEX_UNIT_SP, translationFontSize);
-            translation.setVisibility(translationVisibility);
+        @Override
+        public int getItemViewType(int position) {
+            if (isPositionHeader(position))
+                return TYPE_HEADER;
 
-            transliteration.setText(results.get(position).get(TAG_TRANSLITERATION));
-            transliteration.setTextSize(TypedValue.COMPLEX_UNIT_SP, transliterationFontSize);
-            transliteration.setVisibility(transliterationVisibility);
+            return TYPE_ITEM;
+        }
+
+        private boolean isPositionHeader(int position) {
+            return position == 0;
+        }
+
+        @Override
+        public void onBindViewHolder(ShabadViewHolder shabadHolder, int position) {
+            ShabadList item = shabadList.get(position);
+
+            shabadHolder.vPangti.setText(item.pangti);
+            shabadHolder.vPangti.setTypeface(anmolBani);
+            shabadHolder.vPangti.setTextSize(TypedValue.COMPLEX_UNIT_SP, pangtiFontSize);
+            shabadHolder.vPangti.setVisibility(pangtiVisibility);
+
+            shabadHolder.vLaridaar.setText(item.laridaar);
+            shabadHolder.vLaridaar.setTypeface(anmolBani);
+            shabadHolder.vLaridaar.setTextSize(TypedValue.COMPLEX_UNIT_SP, laridaarFontSize);
+            shabadHolder.vLaridaar.setVisibility(laridaarVisibility);
+
+            shabadHolder.vTranslation.setText(item.translation);
+            shabadHolder.vTranslation.setTextSize(TypedValue.COMPLEX_UNIT_SP, translationFontSize);
+            shabadHolder.vTranslation.setVisibility(translationVisibility);
+
+            shabadHolder.vTransliteration.setText(item.transliteration);
+            shabadHolder.vTransliteration.setTextSize(TypedValue.COMPLEX_UNIT_SP, transliterationFontSize);
+            shabadHolder.vTransliteration.setVisibility(transliterationVisibility);
 
             if (highlightPangti && position == pangtiPosition) {
-                pangti.setTypeface(anmolBaniBold);
-                laridaar.setTypeface(anmolBaniBold);
+                shabadHolder.vPangti.setTypeface(anmolBaniBold);
+                shabadHolder.vLaridaar.setTypeface(anmolBaniBold);
             }
             if (!highlightPangti) {
-                pangti.setTypeface(anmolBani);
-                laridaar.setTypeface(anmolBani);
-                translation.setTypeface(null, Typeface.NORMAL);
-                transliteration.setTypeface(null, Typeface.NORMAL);
+                shabadHolder.vPangti.setTypeface(anmolBani);
+                shabadHolder.vLaridaar.setTypeface(anmolBani);
+                shabadHolder.vTranslation.setTypeface(null, Typeface.NORMAL);
+                shabadHolder.vTransliteration.setTypeface(null, Typeface.NORMAL);
             }
-            return v;
         }
 
-        public boolean isEnabled(int position) {
-            return false;
+        @Override
+        public ShabadViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View rowView;
+            if (i == TYPE_HEADER) {
+                rowView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.header_item, viewGroup, false);
+                RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(
+                        RecyclerView.LayoutParams.MATCH_PARENT,
+                        RecyclerView.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(15, actionBarHeight + (actionBarHeight / 2) + 10, 15, 15);
+                rowView.setLayoutParams(params);
+            } else {
+                rowView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.shabad_item, viewGroup, false);
+            }
+            return new ShabadViewHolder(rowView);
         }
     }
 
@@ -779,7 +822,7 @@ public class ShabadActivity extends AppCompatActivity {
     //shabad json parser
     private String readJson(InputStream in) throws IOException {
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-        pangtiPosition = 0;
+        pangtiPosition = 1;
         String pangti = "Shabad";
         String laridaar = "Shabad-Laridaar";
         String translation = "Translation";
@@ -788,7 +831,7 @@ public class ShabadActivity extends AppCompatActivity {
             reader.beginArray();
             while (reader.hasNext()) {
                 reader.beginObject();
-                HashMap<String, String> shabad = new HashMap<String, String>();
+                ShabadList shabad = new ShabadList();
                 while (reader.hasNext()) {
                     String name = reader.nextName();
                     if (highlightPangti && name.equals(TAG_PANGTI_ID)) {
@@ -833,10 +876,18 @@ public class ShabadActivity extends AppCompatActivity {
                         reader.skipValue();
                     }
                 }
-                shabad.put(TAG_PANGTI, pangti);
-                shabad.put(TAG_LARIDAAR, laridaar);
-                shabad.put(TAG_TRANSLATION, translation);
-                shabad.put(TAG_TRANSLITERATION, transliteration);
+                if (shabadList.isEmpty()) {
+                    ShabadList header = new ShabadList();
+                    header.pangti = "";
+                    header.laridaar = "";
+                    header.translation = "Ang: "+angString;
+                    header.transliteration = raagString;
+                    shabadList.add(header);
+                }
+                shabad.pangti = pangti;
+                shabad.laridaar = laridaar;
+                shabad.translation = translation;
+                shabad.transliteration = transliteration;
                 shabadList.add(shabad);
                 reader.endObject();
             }
