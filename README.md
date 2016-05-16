@@ -29,7 +29,7 @@ Features
 - Take a Hukamnama (random reading of the scriptures)
 
 - Discover the Raags (musical measures) of Gurbani.
-- 
+
 *Gurbani is indexed by Raag, an Indian classical musical concept somewhat similar to musical scales. Each hymn has an associated Raag that evokes a unique mood and emotion tied to the meaning of the hymn.
 
 Contribute
