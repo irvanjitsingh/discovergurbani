@@ -14,7 +14,7 @@ Discover Gurbani is a mobile search engine for the Sikh Scriptures (called Gurba
 
 This app aims to allow anyone, regardless of their background or belief to discover and experience the Sikh ethos. The user can read the text in their native language’s script through transliterations, listen to the recitation, and understand what they’re read with translations of the same language.
 
-***NOTE: No translation of the Gurbani can ever be considered complete as we are flawed by interpretation constrained by the limitations of scripts and languages. Furthermore, the poetry of the text is also lost. Therefore, anyone wishing to fully understand Gurbani should aim to learn the Gurmukhi script and correct enunciation.
+***NOTE: No translation of Gurbani can be considered complete as we are flawed by interpretation constrained by the limitations of scripts and languages. Furthermore, the poetry of the text is also lost. Therefore, anyone wishing to fully understand Gurbani should aim to learn the Gurmukhi script and correct enunciation.
 
 
 Features
