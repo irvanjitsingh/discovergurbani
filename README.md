@@ -10,34 +10,38 @@ Experience the Sikh Scriptures in your native language.
 About
 =====
 
-Discover Gurbani is a search engine for the Sikh Scriptures, Guru Granth Sahib Ji. They contain the writings of the Sikh Gurus, as well as other enlightened Saints of different faiths and backgrounds. The Gurus gave these writings the greatest status in Sikhi and Sikhs now regard Guru Granth Sahib Ji as the eternal, living Guru - the words aren’t just words but are the living embodiment of the Guru’s very spirit and soul.
+Discover Gurbani is a mobile search engine for the Sikh Scriptures (called Gurbani), Guru Granth Sahib Ji. They contain the writings of the Sikh Gurus as well as other enlightened saints of different faiths. The Gurus gave these writings the highest status in the Sikh faith as they living embodiment of divinity itself. Morever, the writings are targetted towards people of all faiths to take wisdom from, Sikhs and non-Sikhs alike. However, language can often become a barrier when studying foreign texts: both for academic research and leisure/curiousity.
 
-The writings, collectively referred to as Gurbani, contain the Gurus wisdom and were compiled and sealed by the Guru themselves. Gurbani is very unique among the various scriptures of the world. It isn’t just a description of the path to enlightenment, but it is the path in itself. One example is everything is written in poetic measure and assigned various musical scales and rhythms - it is not just meant to be read, but sung.
+This app aims to allow anyone, regardless of their background or belief to discover and experience the Sikh ethos. The user can read the text in their native language’s script through transliterations, listen to the recitation, and understand what they’re read with translations of the same language.
 
-With the Guru’s blessing, this app aims to allow anyone, regardless of their background or belief, to discover and experience the Guru’s wisdom. The user can read Gurbani in their native language’s script through transliterations, listen to the recitation, and understand what they’re read with translations of the same language.
-
-***No translation of Gurbani can ever be complete as we are flawed by interpretation, and oftentimes limited by the constraints of scripts, alphabets and languages. With translations, poetic measure is usually also lost. Therefore, anyone wishing to understand Gurbani should aim to eventually learn the Gurmukhi script and correct pronunciation. However, languages can sometimes become barriers; this is an attempt to ease the learning process for those new to Gurbani.
-
-***Dhan Siri Guru Granth Sahib Ji Maharaj is Jagat Guru, meaning they are accessible to everyone, not just Punjabi-speaking Sikhs; people of all walks of life can take the wisdom in these shabads and apply it to their lives. Guru Sahib tells us themselves: Gurbani is the light for entire  world to behold. In our history, great Gursukhs like Baba Deep Singh Ji used to have translations of Maharaj’s saroop prepared and sent to different parts of the world, for the masses to be able to receive the Guru’s wisdom. However today, Gurbani isn’t very accessible to much of the world’s population that isn’t fluent in Punjabi or English. We should strive to learn Gurmukhi and shud uchaaran of Gurbani to fully experience the Gurshabad, but language shouldn’t be a barrier for anyone to discover the beauty of the Guru's wisdom.
+***NOTE: No translation of the Gurbani can ever be considered complete as we are flawed by interpretation constrained by the limitations of scripts and languages. Furthermore, the poetry of the text is also lost. Therefore, anyone wishing to fully understand Gurbani should aim to learn the Gurmukhi script and correct enunciation.
 
 
 Features
 ========
 
-- Search for particular Tukhs (verses) and their corresponding Shabads (hymns)
+- Search for particular verses (Tukhs) and their corresponding hymns (Shabads)
 
-*One of the many amazing qualities of Siri Guru Granth Sahib Ji is that it contains a brilliant but subtle indexing system. They can be searched by using the first 'letter' of each 'word' in a 'sentence'. In this manner, it often only takes 2-4 characters to narrow a search across 5894 hymns down to about a dozen or less.
+*The scriptures have a brilliant but subtle indexing system: For every sentence in the text, take the first 'letter' of each 'word' and concatenate it into a query-string and index the sentences in a db with this query stirng. Developers discovered that due to the uniqueness of the query-strings, running a search against these strings with exact-matching would reduce a total result set of 95000+ data entries to just a handleful (2-5 results) with only a 3-4 character match required. This app makes use of an API that uses this system for rapid search of hymns.
 
-- Read Siri Guru Granth Sahib Ji, from start to finish. When read at one's own pace, this is referred to as a Sehaj Paath
+- Read the scriptures at your own pace (Sehaj Paath).
 
-- Discover the beauty of Siri Guru Granth Sahib Ji, Take a Hukamnama: this is a means for one to communicate with Siri Guru Granth Sahib Ji, to ask the Guru questions and receive guidance.
+- Take a Hukamnama (random reading of the scriptures)
 
-- Explore the Raags (musical measures) of Siri Guru Granth Sahib Ji (coming soon)
+- Discover the Raags (musical measures) of Gurbani.
+- 
+*Gurbani is indexed by Raag, an Indian classical musical concept somewhat similar to musical scales. Each hymn has an associated Raag that evokes a unique mood and emotion tied to the meaning of the hymn.
 
-*Gurbani is indexed by Raag, and each Raag evokes different feelings and emotions associated with it, just as various genres of music evoke various feelings in the listener.
+Contribute
+==========
 
+There is tremendous work that is yet to be done before translation data can be made publicly available, including:
+- Develop an engine to transliterate using the International Phonetic Alphabet
+- Develop a web interface for volunteers to help with translations (or use one of the open-source variants)
+- iOS and web versions
+- Create a newer, refined RESTful API
 
 Acknowledgements
 ================
 
-The Discover Gurbani team is grateful to the Sikher project, whose GurbaniDB platform was used to power this app, as well as the many other Gurbani/Sikhi-based projects out there that have collectively the Gurus' teachings widely accessible.
+The Discover Gurbani team is grateful to the Sikher project for the GurbaniDB platform that was used to power this app, as well as the many other Gurbani/Sikhi-based projects out there that are collectively making Gurbani widely accessible across the world.
